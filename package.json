@@ -1,0 +1,30 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "Internet Engineering course - Express Todo App (clean & scalable)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "express",
+    "todo",
+    "internet-engineering"
+  ],
+  "author": "Student",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.0",
+    "express-validator": "^7.3.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

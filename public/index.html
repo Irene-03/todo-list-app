@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TODO Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar-left">
+      <div class="logo-box">TODO</div>
+
+      <!-- BIG NEW TASK BUTTON -->
+      <button class="btn-primary big" id="sidebar-new-task-btn">
+        New Task
+      </button>
+
+      <!-- CATEGORIES -->
+      <nav class="side-nav">
+        <button class="side-nav-item active" data-category="today">Today's tasks</button>
+        <button class="side-nav-item" data-category="all">All tasks</button>
+        <button class="side-nav-item" data-category="important">Important tasks</button>
+        <button class="side-nav-item" data-category="completed">Completed tasks</button>
+        <button class="side-nav-item" data-category="uncompleted">Uncompleted tasks</button>
+        <button class="side-nav-item" data-category="selected-date" id="selected-date-btn">
+          <span>Selected Date</span>
+          <span class="selected-date-label" id="selected-date-label"></span>
+        </button>
+      </nav>
+
+      <!-- DIRECTORIES -->
+      <div class="side-section-title" id="directories-header">
+        <span class="chevron">⌄</span>
+        <span>Directories</span>
+      </div>
+
+      <div class="side-directories" id="directories-container">
+        <div id="dir-list"></div>
+        <button class="dir-new" id="dir-new-btn">+ New</button>
+      </div>
+
+      <div class="side-avatar">🐻</div>
+    </aside>
+
+    <!-- MAIN COLUMN -->
+    <main class="main-column">
+
+      <!-- TOP BAR -->
+      <div class="top-bar">
+
+        <div class="search-wrapper">
+          <input id="search-task-input" type="text" placeholder="Search task" />
+          <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="top-progress">
+          <div class="top-progress-header">
+            <span id="top-progress-title">Today’s tasks</span>
+            <span id="top-progress-count">0/0</span>
+          </div>
+          <div class="top-progress-bar">
+            <div id="top-progress-fill" class="top-progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="icon-btn">🔔</button>
+          <button class="icon-btn">🗑️</button>
+          <div class="top-avatar">👤</div>
+          <button class="btn-primary small" id="top-new-task-btn">New Task</button>
+        </div>
+      </div>
+
+      <!-- BULK ACTIONS BAR -->
+      <div id="bulk-actions-bar" class="bulk-actions-bar hidden">
+        <span id="bulk-selected-count">0 selected</span>
+        <div class="bulk-actions-buttons">
+          <button id="bulk-delete-btn" class="btn-danger">Delete Selected</button>
+          <button id="bulk-cancel-btn" class="link-btn">Cancel</button>
+        </div>
+      </div>
+
+      <!-- LIST HEADER -->
+      <div class="list-header">
+        <div>
+          <h2 id="list-title">Today's tasks</h2>
+          <span id="list-subtitle" class="list-subtitle">(0 tasks)</span>
+        </div>
+
+        <div class="list-header-right">
+          <div class="view-toggle">
+            <button class="icon-btn active">☰</button>
+            <button class="icon-btn">▦</button>
+          </div>
+
+          <div class="sort-dropdown">
+            <button class="sort-btn" id="sort-btn">Sort by: Date ▾</button>
+            <div class="sort-menu hidden" id="sort-menu">
+              <div class="sort-option" data-sort="date">📅 Date</div>
+              <div class="sort-option" data-sort="priority">⭐ Priority</div>
+              <div class="sort-option" data-sort="title">🔤 Title</div>
+            </div>
+          </div>
+          <button class="link-btn" id="clearCompleted">Clear completed</button>
+        </div>
+      </div>
+
+      <!-- FAST ADD -->
+      <section class="todo-input">
+        <input id="newTodo" type="text" placeholder="Add a new task..." />
+        <select id="priority">
+          <option value="normal">Normal priority</option>
+          <option value="high">High priority</option>
+          <option value="low">Low priority</option>
+        </select>
+        <button id="addBtn" class="btn-primary">Add</button>
+      </section>
+
+      <!-- TASK LIST -->
+      <section>
+        <ul id="todoList" class="todo-list"></ul>
+      </section>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="sidebar-right">
+
+      <!-- WEATHER CARD -->
+      <section class="card weather-card" id="weather-card">
+        <button class="card-close" id="weather-close-btn">×</button>
+
+        <div class="weather-header">
+          <div>
+            <div id="weather-day-label" class="weather-today-label">Today</div>
+            <div id="weather-time" class="weather-time">03:10 am</div>
+          </div>
+          <div id="weather-date-small" class="weather-date-small">Aug 7th</div>
+        </div>
+
+        <div class="weather-main">
+          <div id="weather-temp" class="weather-temp">12°C</div>
+          <div class="weather-icon">🌙☁️</div>
+        </div>
+
+        <div id="weather-location" class="weather-location">United Kingdom, Boston</div>
+        
+        <button class="weather-location-btn" id="weather-location-btn">📍 Change Location</button>
+
+        <div class="weather-extra">
+          <div class="weather-extra-row"><span>❄️</span><span id="weather-snow">9%</span></div>
+          <div class="weather-extra-row"><span>💧</span><span id="weather-humidity">88%</span></div>
+        </div>
+
+        <div id="weather-status" class="weather-status">Partly cloudy</div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="card calendar-card">
+        <header class="calendar-header">
+          <button class="calendar-nav" id="calendar-prev">‹</button>
+          <span id="calendar-month-label">August, 2023</span>
+          <button class="calendar-nav" id="calendar-next">›</button>
+        </header>
+
+        <div class="calendar-weekdays">
+          <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        </div>
+
+        <div id="calendar-grid" class="calendar-grid"></div>
+      </section>
+    </aside>
+
+  </div>
+
+  <!-- MESSAGE NOTIFICATION -->
+  <div id="message" class="message hidden"></div>
+
+  <!-- 🔥 NEW TASK MODAL (نسخه نهایی + multi-group B1) -->
+  <div id="task-modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+
+      <div class="modal-header">
+        <h3>New Task</h3>
+        <button id="task-modal-close" class="modal-close-btn">×</button>
+      </div>
+
+      <form id="task-modal-form" class="modal-form">
+
+        <div class="modal-field">
+          <label for="modal-title">Title</label>
+          <input id="modal-title" type="text" placeholder="Task title" />
+        </div>
+
+        <div class="modal-field">
+          <label for="modal-desc">Description</label>
+          <textarea id="modal-desc" rows="3" placeholder="Write a short description..."></textarea>
+        </div>
+
+        <div class="modal-field">
+          <label>Date</label>
+          <input id="modal-date" type="date" />
+        </div>
+
+        <!-- GROUP SELECT AREA -->
+        <div class="modal-field">
+          <label>Groups</label>
+
+          <div id="group-select-area" class="group-select-area">
+            <!-- گروه‌ها به صورت کارت‌های طلایی اینجا رندر می‌شوند -->
+          </div>
+
+          <div class="group-create-wrapper">
+            <input id="modal-new-group-input" type="text" placeholder="Create new group..." />
+            <button type="button" id="modal-new-group-btn" class="btn-small">Add</button>
+          </div>
+        </div>
+
+        <div class="modal-row">
+          <div class="modal-field">
+            <label for="modal-priority">Priority</label>
+            <select id="modal-priority">
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+
+          <div class="modal-field modal-important-field">
+            <label><input id="modal-important" type="checkbox" /> Mark as important</label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="link-btn" id="task-modal-cancel">Cancel</button>
+          <button type="submit" class="btn-primary">Add task</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
