@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>گزارش فاز اول - پروژه TODO با Express.js</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.8;
+      color: #2c3e50;
+      background: #f5f7fa;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 60px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border-radius: 8px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+      border-bottom: 3px solid #3498db;
+    }
+
+    .header h1 {
+      font-size: 2.2em;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .header .subtitle {
+      font-size: 1.1em;
+      color: #7f8c8d;
+      margin-bottom: 20px;
+    }
+
+    .header .meta {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
+      font-size: 0.95em;
+      color: #555;
+    }
+
+    .header .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 45px;
+    }
+
+    .section-title {
+      font-size: 1.6em;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ecf0f1;
+      font-weight: 600;
+    }
+
+    .section-number {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      text-align: center;
+      border-radius: 50%;
+      margin-left: 10px;
+      font-size: 0.85em;
+    }
+
+    /* Content */
+    p {
+      margin-bottom: 15px;
+      text-align: justify;
+      color: #34495e;
+    }
+
+    ul, ol {
+      margin: 20px 0;
+      padding-right: 25px;
+    }
+
+    li {
+      margin-bottom: 12px;
+      color: #555;
+      line-height: 1.8;
+    }
+
+    strong {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    /* Code Block */
+    .code-block {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 20px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 0.9em;
+      line-height: 1.6;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .code-block code {
+      display: block;
+      white-space: pre;
+    }
+
+    .code-comment {
+      color: #95a5a6;
+      font-style: italic;
+    }
+
+    .code-keyword {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .code-string {
+      color: #2ecc71;
+    }
+
+    .code-function {
+      color: #3498db;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: right;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background: #3498db;
+      color: white;
+      font-weight: 600;
+      font-size: 0.95em;
+    }
+
+    td {
+      color: #555;
+    }
+
+    tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+
+    tr:hover {
+      background: #e8f4f8;
+    }
+
+    /* Info Box */
+    .info-box {
+      background: #e3f2fd;
+      border-right: 4px solid #2196f3;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 4px;
+    }
+
+    .info-box.success {
+      background: #e8f5e9;
+      border-right-color: #4caf50;
+    }
+
+    .info-box.warning {
+      background: #fff3e0;
+      border-right-color: #ff9800;
+    }
+
+    .info-box strong {
+      color: #1976d2;
+    }
+
+    .info-box.success strong {
+      color: #2e7d32;
+    }
+
+    .info-box.warning strong {
+      color: #e65100;
+    }
+
+    /* Feature List */
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .feature-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+      border-right: 3px solid #3498db;
+    }
+
+    .feature-item strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #2c3e50;
+    }
+
+    /* Directory Tree */
+    .tree {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9em;
+      margin: 20px 0;
+      border: 1px solid #e0e0e0;
+    }
+
+    .tree-line {
+      padding: 3px 0;
+      color: #555;
+    }
+
+    .tree-folder {
+      color: #3498db;
+      font-weight: bold;
+    }
+
+    .tree-file {
+      color: #2ecc71;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 2px solid #ecf0f1;
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+
+    .footer a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      
+      .container {
+        box-shadow: none;
+        padding: 40px;
+      }
+
+      .code-block {
+        page-break-inside: avoid;
+      }
+
+      .section {
+        page-break-inside: avoid;
+      }
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      margin: 0 5px;
+      font-weight: 500;
+    }
+
+    .badge.express {
+      background: #000000;
+    }
+
+    .badge.node {
+      background: #68a063;
+    }
+
+    .badge.rest {
+      background: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Header -->
+    <div class="header">
+      <h1>گزارش فاز اول پروژه TODO</h1>
+      <div class="subtitle">پیاده‌سازی REST API با Express.js</div>
+      <div class="meta">
+        <div class="meta-item">
+          <span>👩‍💻</span>
+          <span><strong>توسعه‌دهنده:</strong> عارفه ضرابیان</span>
+        </div>
+        <div class="meta-item">
+          <span>📅</span>
+          <span><strong>تاریخ:</strong> آذر ۱۴۰۴</span>
+        </div>
+        <div class="meta-item">
+          <span>🔗</span>
+          <span><a href="https://github.com/Irene-03/todo-list-app" target="_blank">GitHub Repository</a></span>
+        </div>
+      </div>
+      <div style="margin-top: 20px;">
+        <span class="badge express">Express.js</span>
+        <span class="badge node">Node.js</span>
+        <span class="badge rest">REST API</span>
+      </div>
+    </div>
+
+    <!-- Section 1: اهداف پروژه -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">1</span>
+        اهداف پروژه
+      </h2>
+      <p>
+        هدف این پروژه آشنایی با مفاهیم بنیادین Express.js و ساخت یک REST API کاربردی است.
+        در این فاز، تمرکز بر یادگیری موارد زیر است:
+      </p>
+      <ul>
+        <li><strong>Routing:</strong> پیاده‌سازی مسیرهای HTTP با متدهای GET, POST, PUT, DELETE</li>
+        <li><strong>Middleware:</strong> استفاده از express.json()، logging، و error handling</li>
+        <li><strong>Static Files:</strong> سرو کردن فایل‌های HTML/CSS/JS</li>
+        <li><strong>In-Memory Data:</strong> ذخیره‌سازی داده‌ها در آرایه (بدون نیاز به دیتابیس)</li>
+        <li><strong>RESTful Design:</strong> طراحی API بر اساس استانداردهای REST</li>
+      </ul>
+    </div>
+
+    <!-- Section 2: نمای کلی پروژه -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">2</span>
+        نمای کلی پروژه
+      </h2>
+      <p>
+        این پروژه یک برنامه مدیریت وظایف (To-Do List) است که شامل موارد زیر می‌باشد:
+      </p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <strong>🎨 Frontend</strong>
+          رابط کاربری ساده با HTML/CSS/JavaScript خالص (بدون فریمورک)
+        </div>
+        <div class="feature-item">
+          <strong>⚙️ Backend</strong>
+          API قدرتمند ساخته شده با Express.js
+        </div>
+        <div class="feature-item">
+          <strong>💾 Data Storage</strong>
+          ذخیره‌سازی موقت در حافظه با استفاده از آرایه JavaScript
+        </div>
+        <div class="feature-item">
+          <strong>🔌 REST API</strong>
+          معماری RESTful با endpoint های استاندارد
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: ساختار پروژه -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">3</span>
+        ساختار دایرکتوری
+      </h2>
+      <p>ساختار فایل‌های پروژه به شکل زیر است:</p>
+      <div class="tree">
+<div class="tree-line">todo-app/</div>
+<div class="tree-line">│</div>
+<div class="tree-line">├── <span class="tree-folder">public/</span></div>
+<div class="tree-line">│   ├── <span class="tree-file">index.html</span>      # صفحه اصلی</div>
+<div class="tree-line">│   ├── <span class="tree-file">style.css</span>       # استایل‌های ظاهری</div>
+<div class="tree-line">│   └── <span class="tree-file">script.js</span>       # لاجیک Frontend</div>
+<div class="tree-line">│</div>
+<div class="tree-line">├── <span class="tree-file">app.js</span>              # سرور Express</div>
+<div class="tree-line">└── <span class="tree-file">package.json</span>        # وابستگی‌ها</div>
+      </div>
+
+      <div class="info-box">
+        <strong>نکته:</strong> تمام فایل‌های Frontend در پوشه <code>public/</code> قرار دارند و توسط Express به صورت static سرو می‌شوند.
+      </div>
+    </div>
+
+    <!-- Section 4: مفاهیم Express -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">4</span>
+        مفاهیم کلیدی Express.js
+      </h2>
+      <p>در این پروژه با مفاهیم زیر آشنا می‌شوید:</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>مفهوم</th>
+            <th>مثال کد</th>
+            <th>توضیح</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>راه‌اندازی سرور</strong></td>
+            <td><code>app.listen(3000)</code></td>
+            <td>شروع به کار سرور روی پورت 3000</td>
+          </tr>
+          <tr>
+            <td><strong>Static Files</strong></td>
+            <td><code>app.use(express.static('public'))</code></td>
+            <td>سرو فایل‌های HTML/CSS/JS</td>
+          </tr>
+          <tr>
+            <td><strong>JSON Parsing</strong></td>
+            <td><code>app.use(express.json())</code></td>
+            <td>تبدیل body درخواست به JSON</td>
+          </tr>
+          <tr>
+            <td><strong>GET Route</strong></td>
+            <td><code>app.get('/api/todos')</code></td>
+            <td>دریافت لیست تمام Todoها</td>
+          </tr>
+          <tr>
+            <td><strong>POST Route</strong></td>
+            <td><code>app.post('/api/todos')</code></td>
+            <td>ایجاد Todo جدید</td>
+          </tr>
+          <tr>
+            <td><strong>Route Parameters</strong></td>
+            <td><code>/api/todos/:id</code></td>
+            <td>دسترسی به پارامترهای URL</td>
+          </tr>
+          <tr>
+            <td><strong>Error Handling</strong></td>
+            <td><code>app.use((req, res) => 404)</code></td>
+            <td>مدیریت خطاهای 404 و دیگر</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 5: کد Backend -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">5</span>
+        پیاده‌سازی Backend (app.js)
+      </h2>
+      <p>کد کامل سرور Express با تمام قابلیت‌های CRUD:</p>
+
+      <div class="code-block"><code><span class="code-keyword">const</span> express = <span class="code-function">require</span>(<span class="code-string">'express'</span>);
+<span class="code-keyword">const</span> app = <span class="code-function">express</span>();
+
+<span class="code-comment">// Middleware برای پارس JSON</span>
+app.<span class="code-function">use</span>(express.<span class="code-function">json</span>());
+
+<span class="code-comment">// سرو فایل‌های استاتیک</span>
+app.<span class="code-function">use</span>(express.<span class="code-function">static</span>(<span class="code-string">'public'</span>));
+
+<span class="code-comment">// ذخیره‌سازی موقت در حافظه</span>
+<span class="code-keyword">let</span> todos = [];
+<span class="code-keyword">let</span> id = 1;
+
+<span class="code-comment">// 🔍 GET - دریافت تمام Todoها</span>
+app.<span class="code-function">get</span>(<span class="code-string">'/api/todos'</span>, (req, res) => {
+  res.<span class="code-function">json</span>(todos);
+});
+
+<span class="code-comment">// ➕ POST - ایجاد Todo جدید</span>
+app.<span class="code-function">post</span>(<span class="code-string">'/api/todos'</span>, (req, res) => {
+  <span class="code-keyword">const</span> todo = { 
+    id: id++, 
+    text: req.body.text, 
+    done: <span class="code-keyword">false</span> 
+  };
+  todos.<span class="code-function">push</span>(todo);
+  res.<span class="code-function">status</span>(201).<span class="code-function">json</span>(todo);
+});
+
+<span class="code-comment">// ✏️ PUT - تغییر وضعیت Todo</span>
+app.<span class="code-function">put</span>(<span class="code-string">'/api/todos/:id'</span>, (req, res) => {
+  <span class="code-keyword">const</span> todo = todos.<span class="code-function">find</span>(t => t.id == req.params.id);
+  <span class="code-keyword">if</span> (!todo) <span class="code-keyword">return</span> res.<span class="code-function">status</span>(404).<span class="code-function">send</span>(<span class="code-string">'Not found'</span>);
+  
+  todo.done = !todo.done;
+  res.<span class="code-function">json</span>(todo);
+});
+
+<span class="code-comment">// ❌ DELETE - حذف Todo</span>
+app.<span class="code-function">delete</span>(<span class="code-string">'/api/todos/:id'</span>, (req, res) => {
+  todos = todos.<span class="code-function">filter</span>(t => t.id != req.params.id);
+  res.<span class="code-function">status</span>(204).<span class="code-function">end</span>();
+});
+
+<span class="code-comment">// مدیریت 404</span>
+app.<span class="code-function">use</span>((req, res) => {
+  res.<span class="code-function">status</span>(404).<span class="code-function">send</span>(<span class="code-string">'Not found'</span>);
+});
+
+<span class="code-comment">// راه‌اندازی سرور</span>
+app.<span class="code-function">listen</span>(3000, () => {
+  console.<span class="code-function">log</span>(<span class="code-string">'Server running on http://localhost:3000'</span>);
+});</code></div>
+
+      <div class="info-box success">
+        <strong>✅ قابلیت‌های پیاده‌سازی شده:</strong>
+        <ul style="margin-top: 10px;">
+          <li>دریافت لیست Todoها (GET /api/todos)</li>
+          <li>ایجاد Todo جدید (POST /api/todos)</li>
+          <li>تغییر وضعیت Todo (PUT /api/todos/:id)</li>
+          <li>حذف Todo (DELETE /api/todos/:id)</li>
+          <li>مدیریت خطای 404</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 6: Frontend HTML -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">6</span>
+        رابط کاربری (index.html)
+      </h2>
+      <p>یک رابط کاربری ساده و کاربردی:</p>
+
+      <div class="code-block"><code><span class="code-keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="code-keyword">&lt;html&gt;</span>
+<span class="code-keyword">&lt;head&gt;</span>
+  <span class="code-keyword">&lt;title&gt;</span>Todo List<span class="code-keyword">&lt;/title&gt;</span>
+  <span class="code-keyword">&lt;link</span> <span class="code-string">rel</span>=<span class="code-string">"stylesheet"</span> <span class="code-string">href</span>=<span class="code-string">"style.css"</span><span class="code-keyword">&gt;</span>
+<span class="code-keyword">&lt;/head&gt;</span>
+<span class="code-keyword">&lt;body&gt;</span>
+  <span class="code-keyword">&lt;h1&gt;</span>My Todos<span class="code-keyword">&lt;/h1&gt;</span>
+  
+  <span class="code-comment">&lt;!-- فرم افزودن Task --&gt;</span>
+  <span class="code-keyword">&lt;input</span> <span class="code-string">id</span>=<span class="code-string">"newTodo"</span> <span class="code-string">placeholder</span>=<span class="code-string">"Add task..."</span><span class="code-keyword">&gt;</span>
+  <span class="code-keyword">&lt;button</span> <span class="code-string">onclick</span>=<span class="code-string">"addTodo()"</span><span class="code-keyword">&gt;</span>Add<span class="code-keyword">&lt;/button&gt;</span>
+  
+  <span class="code-comment">&lt;!-- لیست Todoها --&gt;</span>
+  <span class="code-keyword">&lt;ul</span> <span class="code-string">id</span>=<span class="code-string">"list"</span><span class="code-keyword">&gt;&lt;/ul&gt;</span>
+
+  <span class="code-keyword">&lt;script</span> <span class="code-string">src</span>=<span class="code-string">"script.js"</span><span class="code-keyword">&gt;&lt;/script&gt;</span>
+<span class="code-keyword">&lt;/body&gt;</span>
+<span class="code-keyword">&lt;/html&gt;</span></code></div>
+    </div>
+
+    <!-- Section 7: Frontend JavaScript -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">7</span>
+        لاجیک Frontend (script.js)
+      </h2>
+      <p>کد JavaScript برای ارتباط با API:</p>
+
+      <div class="code-block"><code><span class="code-comment">// 🔄 بارگذاری Todoها از سرور</span>
+<span class="code-keyword">async function</span> <span class="code-function">loadTodos</span>() {
+  <span class="code-keyword">const</span> res = <span class="code-keyword">await</span> <span class="code-function">fetch</span>(<span class="code-string">'/api/todos'</span>);
+  <span class="code-keyword">const</span> todos = <span class="code-keyword">await</span> res.<span class="code-function">json</span>();
+  
+  <span class="code-keyword">const</span> list = document.<span class="code-function">getElementById</span>(<span class="code-string">'list'</span>);
+  list.innerHTML = <span class="code-string">''</span>;
+  
+  todos.<span class="code-function">forEach</span>(t => {
+    <span class="code-keyword">const</span> li = document.<span class="code-function">createElement</span>(<span class="code-string">'li'</span>);
+    li.textContent = (t.done ? <span class="code-string">'✅ '</span> : <span class="code-string">'⬜ '</span>) + t.text;
+    li.onclick = () => <span class="code-function">toggle</span>(t.id);
+    list.<span class="code-function">appendChild</span>(li);
+  });
+}
+
+<span class="code-comment">// ➕ افزودن Todo جدید</span>
+<span class="code-keyword">async function</span> <span class="code-function">addTodo</span>() {
+  <span class="code-keyword">const</span> text = document.<span class="code-function">getElementById</span>(<span class="code-string">'newTodo'</span>).value;
+  
+  <span class="code-keyword">await</span> <span class="code-function">fetch</span>(<span class="code-string">'/api/todos'</span>, {
+    method: <span class="code-string">'POST'</span>,
+    headers: { <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span> },
+    body: JSON.<span class="code-function">stringify</span>({ text })
+  });
+  
+  <span class="code-function">loadTodos</span>();
+}
+
+<span class="code-comment">// ✏️ تغییر وضعیت Todo</span>
+<span class="code-keyword">async function</span> <span class="code-function">toggle</span>(id) {
+  <span class="code-keyword">await</span> <span class="code-function">fetch</span>(`<span class="code-string">/api/todos/${id}</span>`, { 
+    method: <span class="code-string">'PUT'</span> 
+  });
+  
+  <span class="code-function">loadTodos</span>();
+}
+
+<span class="code-comment">// بارگذاری اولیه</span>
+<span class="code-function">loadTodos</span>();</code></div>
+
+      <div class="info-box warning">
+        <strong>⚠️ نکته مهم:</strong> در این فاز از <code>async/await</code> برای مدیریت درخواست‌های HTTP استفاده شده است. این رویکرد کد را خواناتر و قابل نگهداری‌تر می‌کند.
+      </div>
+    </div>
+
+    <!-- Section 8: Request Flow -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">8</span>
+        چرخه کامل یک درخواست
+      </h2>
+      <p>فرآیند کامل از کلیک کاربر تا نمایش نتیجه:</p>
+
+      <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 20px 0;">
+        <div style="text-align: center; line-height: 2.5;">
+          <div style="background: #3498db; color: white; padding: 12px; border-radius: 6px; margin: 10px 0;">
+            1️⃣ کاربر روی دکمه "Add" کلیک می‌کند
+          </div>
+          <div style="font-size: 1.5em; color: #95a5a6;">⬇️</div>
+          <div style="background: #2ecc71; color: white; padding: 12px; border-radius: 6px; margin: 10px 0;">
+            2️⃣ تابع <code>addTodo()</code> فراخوانی می‌شود
+          </div>
+          <div style="font-size: 1.5em; color: #95a5a6;">⬇️</div>
+          <div style="background: #e74c3c; color: white; padding: 12px; border-radius: 6px; margin: 10px 0;">
+            3️⃣ درخواست POST به <code>/api/todos</code> ارسال می‌شود
+          </div>
+          <div style="font-size: 1.5em; color: #95a5a6;">⬇️</div>
+          <div style="background: #f39c12; color: white; padding: 12px; border-radius: 6px; margin: 10px 0;">
+            4️⃣ Express درخواست را دریافت و پردازش می‌کند
+          </div>
+          <div style="font-size: 1.5em; color: #95a5a6;">⬇️</div>
+          <div style="background: #9b59b6; color: white; padding: 12px; border-radius: 6px; margin: 10px 0;">
+            5️⃣ Todo جدید به آرایه اضافه می‌شود
+          </div>
+          <div style="font-size: 1.5em; color: #95a5a6;">⬇️</div>
+          <div style="background: #1abc9c; color: white; padding: 12px; border-radius: 6px; margin: 10px 0;">
+            6️⃣ پاسخ JSON به Frontend بازگردانده می‌شود
+          </div>
+          <div style="font-size: 1.5em; color: #95a5a6;">⬇️</div>
+          <div style="background: #34495e; color: white; padding: 12px; border-radius: 6px; margin: 10px 0;">
+            7️⃣ تابع <code>loadTodos()</code> لیست را به‌روز می‌کند
+          </div>
+          <div style="font-size: 1.5em; color: #95a5a6;">⬇️</div>
+          <div style="background: #27ae60; color: white; padding: 12px; border-radius: 6px; margin: 10px 0;">
+            ✅ کاربر Todo جدید را در لیست می‌بیند
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 9: قابلیت‌های یادگیری -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">9</span>
+        مهارت‌های آموخته شده
+      </h2>
+      <p>در پایان این پروژه، دانشجویان با موارد زیر آشنا می‌شوند:</p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <strong>📡 Request Lifecycle</strong>
+          درک کامل مسیر یک درخواست از Frontend تا Backend و برگشت
+        </div>
+        <div class="feature-item">
+          <strong>🔄 CRUD Operations</strong>
+          پیاده‌سازی عملیات Create, Read, Update, Delete
+        </div>
+        <div class="feature-item">
+          <strong>🎯 REST Principles</strong>
+          طراحی API بر اساس معماری REST
+        </div>
+        <div class="feature-item">
+          <strong>⚙️ Middleware Concept</strong>
+          نحوه عملکرد Middlewareها در Express
+        </div>
+        <div class="feature-item">
+          <strong>🔌 Routing Logic</strong>
+          مدیریت مسیرها و پارامترهای URL
+        </div>
+        <div class="feature-item">
+          <strong>🧪 API Testing</strong>
+          تست API با مرورگر و ابزارهایی مانند Postman
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 10: توسعه‌های آینده -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">10</span>
+        امکان توسعه (Extensions)
+      </h2>
+      <p>برای یادگیری بیشتر، می‌توان موارد زیر را به پروژه اضافه کرد:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ویژگی</th>
+            <th>توضیح</th>
+            <th>سطح دشواری</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Logging Middleware</strong></td>
+            <td>استفاده از Morgan برای لاگ درخواست‌ها</td>
+            <td>ساده</td>
+          </tr>
+          <tr>
+            <td><strong>Custom 404 Handler</strong></td>
+            <td>صفحه سفارشی برای خطاهای 404</td>
+            <td>ساده</td>
+          </tr>
+          <tr>
+            <td><strong>Modular Routes</strong></td>
+            <td>جداسازی routeها در فایل <code>routes/todos.js</code></td>
+            <td>متوسط</td>
+          </tr>
+          <tr>
+            <td><strong>Query Filtering</strong></td>
+            <td>فیلتر کردن با <code>?done=true</code></td>
+            <td>متوسط</td>
+          </tr>
+          <tr>
+            <td><strong>File Persistence</strong></td>
+            <td>ذخیره‌سازی در فایل JSON</td>
+            <td>متوسط</td>
+          </tr>
+          <tr>
+            <td><strong>Database Integration</strong></td>
+            <td>استفاده از SQLite یا MongoDB</td>
+            <td>پیشرفته</td>
+          </tr>
+          <tr>
+            <td><strong>Deployment</strong></td>
+            <td>دیپلوی روی Render یا Glitch</td>
+            <td>پیشرفته</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box">
+        <strong>💡 پیشنهاد:</strong> پس از تسلط بر فاز اول، می‌توانید به سراغ فاز دوم بروید که شامل SQLite، Validation، Security Middlewares و معماری MVC است.
+      </div>
+    </div>
+
+    <!-- Section 11: نمونه خروجی -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">11</span>
+        نمونه خروجی برنامه
+      </h2>
+      <p>
+        تصاویر زیر نمایی از رابط کاربری کامل پروژه را نشان می‌دهند:
+      </p>
+
+      <div style="margin: 30px 0;">
+        <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.2em;">📋 صفحه اصلی - لیست وظایف</h3>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 2px solid #e0e0e0;">
+          <img src="media/ex1.png" 
+               alt="Main Task List View" 
+               style="width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        </div>
+        <p style="margin-top: 15px; color: #555; font-size: 0.95em;">
+          <strong>ویژگی‌های نمایش داده شده:</strong>
+        </p>
+        <ul style="margin-top: 10px; color: #555;">
+          <li>نوار کناری با دسته‌بندی‌ها (Today's tasks, All tasks, Important tasks و ...)</li>
+          <li>لیست وظایف با امکان نمایش تاریخ و اولویت</li>
+          <li>نمایش Directories (گروه‌های سفارشی کاربر)</li>
+          <li>ویجت آب و هوا در سمت راست</li>
+          <li>تقویم تعاملی برای انتخاب تاریخ</li>
+          <li>دکمه "New Task" برای افزودن وظیفه جدید</li>
+          <li>فیلتر و مرتب‌سازی وظایف (Sort by Date)</li>
+          <li>نمایش تعداد وظایف (3 tasks در این نمونه)</li>
+        </ul>
+      </div>
+
+      <div style="margin: 40px 0;">
+        <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.2em;">➕ مودال افزودن وظیفه جدید</h3>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 2px solid #e0e0e0;">
+          <img src="media/ex2.png" 
+               alt="New Task Modal" 
+               style="width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        </div>
+        <p style="margin-top: 15px; color: #555; font-size: 0.95em;">
+          <strong>فیلدهای فرم:</strong>
+        </p>
+        <ul style="margin-top: 10px; color: #555;">
+          <li><strong>Title:</strong> عنوان وظیفه (الزامی)</li>
+          <li><strong>Description:</strong> توضیحات اختیاری درباره وظیفه</li>
+          <li><strong>Date:</strong> تاریخ سررسید با فرمت mm/dd/yyyy</li>
+          <li><strong>Groups:</strong> انتخاب یا ایجاد گروه‌های سفارشی (مانند "dizzz" و "uni")</li>
+          <li><strong>Priority:</strong> سطح اولویت (Low, Normal, High)</li>
+          <li><strong>Mark as important:</strong> چک‌باکس برای علامت‌گذاری به عنوان مهم</li>
+          <li>دکمه‌های <code>Cancel</code> و <code>Add task</code></li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <strong>💡 نکته:</strong> این رابط کاربری به صورت کامل با API های فاز اول در ارتباط است. 
+        هر عملیات (افزودن، ویرایش، حذف) بلافاصله از طریق درخواست‌های AJAX به سرور ارسال شده و پاسخ دریافت می‌شود.
+      </div>
+    </div>
+
+    <!-- Section 12: نتیجه‌گیری -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="section-number">12</span>
+        نتیجه‌گیری
+      </h2>
+      <p>
+        در این فاز از پروژه، یک REST API کامل و کاربردی با Express.js پیاده‌سازی شد.
+        این پروژه پایه‌ای محکم برای یادگیری مفاهیم پیشرفته‌تر وب سرویس‌ها فراهم می‌کند.
+      </p>
+
+      <div class="info-box success">
+        <strong>✅ دستاوردهای فاز اول:</strong>
+        <ul style="margin-top: 10px;">
+          <li>راه‌اندازی سرور Express با 4 endpoint</li>
+          <li>پیاده‌سازی عملیات CRUD کامل</li>
+          <li>استفاده از Middleware برای پارس JSON</li>
+          <li>سرو فایل‌های استاتیک</li>
+          <li>مدیریت خطاهای پایه</li>
+          <li>ایجاد رابط کاربری تعاملی</li>
+          <li>ارتباط Frontend-Backend با Fetch API</li>
+        </ul>
+      </div>
+
+      <p style="margin-top: 25px; text-align: center; font-size: 1.1em; color: #2c3e50;">
+        <strong>این پروژه آماده است برای توسعه به فازهای بعدی!</strong> 🚀
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p><strong>📋 TODO Dashboard Project - Phase 1</strong></p>
+      <p style="margin-top: 10px;">
+        توسعه‌دهنده: <strong>عارفه ضرابیان</strong> | 
+        <a href="https://github.com/Irene-03/todo-list-app" target="_blank">GitHub Repository</a>
+      </p>
+      <p style="margin-top: 10px; color: #95a5a6; font-size: 0.85em;">
+        ساخته شده با ❤️ برای درس مهندسی اینترنت
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

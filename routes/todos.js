@@ -1,22 +1,23 @@
 // ======================================================================
-// Todo Routes - With Express Validator & Async Handler
+// Todo Routes - Phase 3: With Controllers & JWT Authentication
 // ======================================================================
 
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const asyncHandler = require("../middleware/asyncHandler");
+const { authenticateToken } = require("../middleware/authenticateToken");
+const { createTodoLimiter } = require("../middleware/rateLimiter");
 
 const {
-  createTodo,
   getTodos,
-  getById,
-  toggleDone,
+  getTodoById,
+  createTodo,
   updateTodo,
-  removeTodo,
+  deleteTodo,
   clearCompleted,
   getStats
-} = require("../models/todoStore");
+} = require("../controllers/todoController");
 
 // ======================================================================
 // VALIDATION RULES
@@ -102,82 +103,40 @@ function handleValidationErrors(req, res, next) {
 }
 
 // ======================================================================
-// ROUTES
+// ROUTES - All routes require JWT authentication
 // ======================================================================
 
-// GET all todos with filters
-router.get("/", asyncHandler(async (req, res) => {
-  const { status, search } = req.query;
-  const list = getTodos({ status, search });
-  res.json(list);
-}));
+// Apply authentication to all routes
+router.use(authenticateToken);
 
-// POST create new todo
+// GET stats (must be before /:id route)
+router.get("/stats", asyncHandler(getStats));
+
+// GET all todos with filters
+router.get("/", asyncHandler(getTodos));
+
+// GET single todo
+router.get("/:id", asyncHandler(getTodoById));
+
+// POST create new todo (with rate limiting)
 router.post("/", 
+  createTodoLimiter,
   createTodoValidation,
   handleValidationErrors,
-  asyncHandler(async (req, res) => {
-    const { text, description, priority, dueDate, groups, important } = req.body;
-    const todo = createTodo({ text, description, priority, dueDate, groups, important });
-    res.status(201).json(todo);
-  })
+  asyncHandler(createTodo)
 );
 
 // PUT update or toggle done
 router.put("/:id", 
   updateTodoValidation,
   handleValidationErrors,
-  asyncHandler(async (req, res) => {
-    const id = Number(req.params.id);
-    const todo = getById(id);
-    
-    if (!todo) {
-      return res.status(404).json({ 
-        success: false,
-        error: {
-          message: 'Todo not found',
-          status: 404
-        }
-      });
-    }
-
-    if (req.body.action === "toggle") {
-      const updated = toggleDone(id);
-      return res.json(updated);
-    }
-
-    // update fields
-    const updated = updateTodo(id, req.body);
-    res.json(updated);
-  })
+  asyncHandler(updateTodo)
 );
 
-// DELETE one
-router.delete("/:id", asyncHandler(async (req, res) => {
-  const ok = removeTodo(req.params.id);
-  
-  if (!ok) {
-    return res.status(404).json({ 
-      success: false,
-      error: {
-        message: 'Todo not found',
-        status: 404
-      }
-    });
-  }
-  
-  res.json({ success: true });
-}));
+// DELETE one todo
+router.delete("/:id", asyncHandler(deleteTodo));
 
-// DELETE ALL completed
-router.delete("/", asyncHandler(async (req, res) => {
-  const deleted = clearCompleted();
-  res.json({ deleted });
-}));
-
-// GET stats
-router.get("/stats", asyncHandler(async (req, res) => {
-  res.json(getStats());
-}));
+// DELETE ALL completed todos
+router.delete("/", asyncHandler(clearCompleted));
 
 module.exports = router;

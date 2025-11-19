@@ -9,6 +9,10 @@ node_modules/
 *.sqlite
 *.sqlite3
 
+# SSL Certificates
+cert/
+*.pem
+
 # Logs
 access.log
 *.log
