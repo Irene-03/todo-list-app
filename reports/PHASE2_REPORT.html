@@ -459,14 +459,14 @@ JWT Auth → Route Handler → Error Handler → Response</code>
                         <tr>
                             <td>ثبت‌نام کاربر جدید</td>
                             <td>5/15min</td>
-                            <td>❌</td>
+                            <td>✅</td>
                             <td>POST</td>
                             <td>/api/auth/register</td>
                         </tr>
                         <tr>
                             <td>ورود کاربر</td>
                             <td>5/15min</td>
-                            <td>❌</td>
+                            <td>✅</td>
                             <td>POST</td>
                             <td>/api/auth/login</td>
                         </tr>
@@ -708,49 +708,24 @@ docker-compose down</code>
                 <h2>📸 اسکرین‌شات‌های پروژه</h2>
                 
                 <div class="screenshot">
-                    <img src="screenshots/01-login-register.png" alt="Login/Register Page" style="max-width: 100%; border: 2px solid #e0e6ed;">
-                    <p><strong>صفحه ورود و ثبت‌نام</strong> - فرم احراز هویت با قابلیت Keep me logged in</p>
+                    <img src="../screenshots/login-screen.png" alt="Login Screen" style="max-width: 100%; border: 2px solid #e0e6ed;">
+                    <p><strong>صفحه ورود</strong> - فرم احراز هویت با قابلیت Keep me logged in</p>
                 </div>
 
                 <div class="screenshot">
-                    <img src="screenshots/02-main-dashboard.png" alt="Main Dashboard" style="max-width: 100%; border: 2px solid #e0e6ed;">
-                    <p><strong>Dashboard اصلی</strong> - رابط کاربری با TODO ها، فیلترها و sidebar</p>
+                    <img src="../screenshots/register-screen.png" alt="Register Screen" style="max-width: 100%; border: 2px solid #e0e6ed;">
+                    <p><strong>صفحه ثبت‌نام</strong> - فرم ایجاد حساب کاربری جدید</p>
                 </div>
 
                 <div class="screenshot">
-                    <img src="screenshots/03-add-todo-modal.png" alt="Add TODO Modal" style="max-width: 100%; border: 2px solid #e0e6ed;">
-                    <p><strong>مودال افزودن TODO</strong> - فرم ایجاد TODO با فیلدهای مختلف</p>
+                    <img src="../screenshots/dashbord-screen.png" alt="Dashboard Screen" style="max-width: 100%; border: 2px solid #e0e6ed;">
+                    <p><strong>Dashboard اصلی</strong> - رابط کاربری با TODO ها، فیلترها و امکانات مدیریت وظایف</p>
                 </div>
 
                 <div class="screenshot">
-                    <img src="screenshots/05-mongodb-connected.png" alt="MongoDB Connection" style="max-width: 100%; border: 2px solid #e0e6ed;">
-                    <p><strong>اتصال MongoDB</strong> - لاگ موفقیت‌آمیز اتصال به دیتابیس</p>
+                    <img src="../screenshots/add-new-task-popup-screen.png" alt="Add New Task Popup" style="max-width: 100%; border: 2px solid #e0e6ed;">
+                    <p><strong>مودال افزودن TODO</strong> - فرم ایجاد TODO جدید با فیلدهای عنوان، توضیحات، تاریخ و اولویت</p>
                 </div>
-
-                <div class="screenshot">
-                    <img src="screenshots/06-postman-api-test.png" alt="Postman API Test" style="max-width: 100%; border: 2px solid #e0e6ed;">
-                    <p><strong>تست API با Postman</strong> - درخواست ثبت‌نام کاربر</p>
-                </div>
-
-                <div class="screenshot">
-                    <img src="screenshots/07-jwt-token.png" alt="JWT Token" style="max-width: 100%; border: 2px solid #e0e6ed;">
-                    <p><strong>JWT Token</strong> - نمایش token در localStorage مرورگر</p>
-                </div>
-
-                <div class="screenshot">
-                    <img src="screenshots/08-rate-limiting.png" alt="Rate Limiting" style="max-width: 100%; border: 2px solid #e0e6ed;">
-                    <p><strong>Rate Limiting</strong> - خطای 429 بعد از تلاش‌های زیاد</p>
-                </div>
-
-                <div class="screenshot">
-                    <img src="screenshots/09-docker-running.png" alt="Docker Running" style="max-width: 100%; border: 2px solid #e0e6ed;">
-                    <p><strong>Docker در حال اجرا</strong> - کانتینرهای MongoDB و Express</p>
-                </div>
-
-                <p style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 20px;">
-                    <strong>📝 نکته:</strong> برای گرفتن اسکرین‌شات‌ها از صفحه 
-                    <a href="screenshots-guide.html" target="_blank">راهنمای اسکرین‌شات</a> استفاده کنید.
-                </p>
             </div>
 
             <!-- Testing Results -->
@@ -951,95 +926,6 @@ docker-compose down</code>
                             <li>Vanilla JavaScript</li>
                         </ul>
                     </div>
-                </div>
-            </div>
-
-            <!-- Screenshots Section -->
-            <div class="section">
-                <h2>📸 تصاویر پروژه</h2>
-                <p>
-                    در این بخش تصاویری از بخش‌های مختلف پروژه نمایش داده شده است. تمام تصاویر در پوشه <code>screenshots/</code> ذخیره شده‌اند.
-                </p>
-
-                <div style="margin-top: 30px;">
-                    <h3>🏠 صفحه خوش‌آمدگویی (Welcome Page)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/01-welcome-page.png" alt="Welcome Page" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">صفحه اول پروژه با معرفی ویژگی‌ها</p>
-                    </div>
-
-                    <h3>🔐 صفحه ورود و ثبت‌نام (Login & Register)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/02-login-register.png" alt="Login Register Page" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">سیستم احراز هویت با JWT و گزینه "Keep me logged in"</p>
-                    </div>
-
-                    <h3>📋 داشبورد اصلی (Main Dashboard)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/03-main-dashboard.png" alt="Main Dashboard" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">رابط کاربری اصلی با نمایش وظایف</p>
-                    </div>
-
-                    <h3>✏️ افزودن وظیفه جدید (Add New Task)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/04-add-task.png" alt="Add Task Modal" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">مودال افزودن وظیفه با فیلدهای کامل</p>
-                    </div>
-
-                    <h3>🔍 فیلتر و جستجو (Filter & Search)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/05-filter-search.png" alt="Filter and Search" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">امکانات فیلتر و جستجوی وظایف</p>
-                    </div>
-
-                    <h3>📅 تقویم و آب و هوا (Calendar & Weather)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/06-calendar-weather.png" alt="Calendar and Weather" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">تقویم تعاملی و نمایش وضعیت آب و هوا</p>
-                    </div>
-
-                    <h3>📊 مدیریت دایرکتوری (Directories Management)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/07-directories.png" alt="Directories Management" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">سازماندهی وظایف در دایرکتوری‌ها</p>
-                    </div>
-
-                    <h3>🔒 احراز هویت JWT (JWT Authentication)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/08-jwt-auth.png" alt="JWT Authentication" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">سیستم احراز هویت با Token در Console</p>
-                    </div>
-
-                    <h3>💾 MongoDB داده‌ها (MongoDB Data)</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/09-mongodb-data.png" alt="MongoDB Data" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">نمایش داده‌ها در MongoDB Compass</p>
-                    </div>
-
-                    <h3>🐳 Docker Setup</h3>
-                    <div style="margin: 20px 0; text-align: center;">
-                        <img src="../screenshots/10-docker-setup.png" alt="Docker Setup" style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">راه‌اندازی پروژه با Docker</p>
-                    </div>
-                </div>
-
-                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border-right: 5px solid #ffc107; margin-top: 30px;">
-                    <h4 style="color: #856404; margin-bottom: 10px;">📁 راهنمای ذخیره تصاویر:</h4>
-                    <p style="color: #856404;">
-                        تمام تصاویر را در پوشه <code>screenshots/</code> در ریشه پروژه قرار دهید با نام‌های زیر:
-                    </p>
-                    <ul style="color: #856404; margin-right: 40px; margin-top: 10px;">
-                        <li>01-welcome-page.png</li>
-                        <li>02-login-register.png</li>
-                        <li>03-main-dashboard.png</li>
-                        <li>04-add-task.png</li>
-                        <li>05-filter-search.png</li>
-                        <li>06-calendar-weather.png</li>
-                        <li>07-directories.png</li>
-                        <li>08-jwt-auth.png</li>
-                        <li>09-mongodb-data.png</li>
-                        <li>10-docker-setup.png</li>
-                    </ul>
                 </div>
             </div>
 
