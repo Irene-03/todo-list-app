@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارش کامل پروژه TODO Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .main-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+        .main-header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .main-header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+        .student-info {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            border-bottom: 3px solid #667eea;
+        }
+        .student-info h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-right: 4px solid #667eea;
+        }
+        .info-item strong {
+            color: #764ba2;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .section h2 {
+            color: #764ba2;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+        .section h3 {
+            color: #667eea;
+            margin: 25px 0 15px;
+            font-size: 1.5em;
+        }
+        .phase-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid #e0e6ed;
+        }
+        .phase-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+        .phase-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            line-height: 1;
+        }
+        .phase-title {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .phase-title h3 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin: 0;
+        }
+        .phase-title p {
+            color: #666;
+            margin-top: 5px;
+        }
+        .phase-status {
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 4px solid #667eea;
+            transition: transform 0.2s;
+        }
+        .feature-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .feature-item h4 {
+            color: #764ba2;
+            margin-bottom: 8px;
+        }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .tech-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        .stat-box .number {
+            font-size: 3em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .stat-box .label {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        .code-snippet {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .code-snippet code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #e0e6ed;
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .footer {
+            background: #2d2d2d;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Header -->
+        <div class="main-header">
+            <h1>📊 گزارش کامل پروژه</h1>
+            <p>TODO Dashboard - Three-Phase Full-Stack Application</p>
+        </div>
+
+        <!-- Student Info -->
+        <div class="student-info">
+            <h2>👤 اطلاعات دانشجو</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>نام و نام خانوادگی:</strong>
+                    عارفه ضرابیان
+                </div>
+                <div class="info-item">
+                    <strong>شماره دانشجویی:</strong>
+                    40134693
+                </div>
+                <div class="info-item">
+                    <strong>ایمیل:</strong>
+                    z.arefeh.za@gmail.com
+                </div>
+                <div class="info-item">
+                    <strong>لینک GitHub:</strong>
+                    <a href="https://github.com/Irene-03/todo-list-app" target="_blank">github.com/Irene-03/todo-list-app</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Overview -->
+            <div class="section">
+                <h2>📖 خلاصه پروژه</h2>
+                <p style="font-size: 1.1em;">
+                    پروژه <strong>TODO Dashboard</strong> یک برنامه کاربردی full-stack برای مدیریت وظایف است که در سه فاز
+                    توسعه یافته و از ساده‌ترین حالت frontend تا یک سیستم پیچیده با MongoDB، احراز هویت JWT، امنیت پیشرفته
+                    و قابلیت استقرار با Docker رشد کرده است.
+                </p>
+                
+                <div class="stats-section">
+                    <div class="stat-box">
+                        <span class="number">3</span>
+                        <span class="label">فاز توسعه</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="number">2500+</span>
+                        <span class="label">خط کد</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="number">25+</span>
+                        <span class="label">فایل</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="number">11</span>
+                        <span class="label">API Endpoint</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="number">12</span>
+                        <span class="label">کتابخانه</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="number">100%</span>
+                        <span class="label">موفقیت</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 1 -->
+            <div class="section">
+                <div class="phase-container">
+                    <div class="phase-header">
+                        <div class="phase-number">01</div>
+                        <div class="phase-title">
+                            <h3>فاز اول: Frontend Development</h3>
+                            <p>طراحی رابط کاربری با Vanilla JavaScript</p>
+                        </div>
+                        <div class="phase-status">✓ کامل شده</div>
+                    </div>
+
+                    <h3>✨ قابلیت‌ها:</h3>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <h4>📝 مدیریت TODO</h4>
+                            <p>افزودن، ویرایش، حذف، تکمیل</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>⭐ اولویت‌بندی</h4>
+                            <p>کم، متوسط، زیاد</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>📂 گروه‌بندی</h4>
+                            <p>تگ‌های رنگی</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🔍 جستجو</h4>
+                            <p>فیلتر و search</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>📊 آمار</h4>
+                            <p>Real-time statistics</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🎨 UI مدرن</h4>
+                            <p>Animations & Responsive</p>
+                        </div>
+                    </div>
+
+                    <h3>🛠️ تکنولوژی:</h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">HTML5</span>
+                        <span class="tech-badge">CSS3</span>
+                        <span class="tech-badge">JavaScript ES6+</span>
+                        <span class="tech-badge">Local Storage</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="section">
+                <div class="phase-container">
+                    <div class="phase-header">
+                        <div class="phase-number">02</div>
+                        <div class="phase-title">
+                            <h3>فاز دوم: Backend با Express.js</h3>
+                            <p>ایجاد REST API</p>
+                        </div>
+                        <div class="phase-status">✓ کامل شده</div>
+                    </div>
+
+                    <h3>✨ قابلیت‌ها:</h3>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <h4>🔌 REST API</h4>
+                            <p>8 endpoints</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🗄️ SQLite</h4>
+                            <p>Database persistence</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🔒 Security</h4>
+                            <p>Helmet + CORS</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>📝 Logging</h4>
+                            <p>Morgan logger</p>
+                        </div>
+                    </div>
+
+                    <h3>🛠️ تکنولوژی:</h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Node.js</span>
+                        <span class="tech-badge">Express 4.21</span>
+                        <span class="tech-badge">SQLite3</span>
+                        <span class="tech-badge">Helmet</span>
+                        <span class="tech-badge">CORS</span>
+                        <span class="tech-badge">Morgan</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="section">
+                <div class="phase-container">
+                    <div class="phase-header">
+                        <div class="phase-number">03</div>
+                        <div class="phase-title">
+                            <h3>فاز سوم: MongoDB + JWT + Docker</h3>
+                            <p>ارتقا به سیستم حرفه‌ای</p>
+                        </div>
+                        <div class="phase-status">✓ کامل شده</div>
+                    </div>
+
+                    <h3>✨ قابلیت‌های جدید:</h3>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <h4>🗄️ MongoDB</h4>
+                            <p>Mongoose ODM + Indexes</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🔐 JWT Auth</h4>
+                            <p>Register + Login + RBAC</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🔒 bcrypt</h4>
+                            <p>Password hashing</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>⏱️ Rate Limit</h4>
+                            <p>3-tier protection</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🔐 HTTPS</h4>
+                            <p>SSL/TLS support</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🏗️ MVC</h4>
+                            <p>Controllers separated</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>👤 Multi-user</h4>
+                            <p>Data isolation</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>🐳 Docker</h4>
+                            <p>Full containerization</p>
+                        </div>
+                    </div>
+
+                    <h3>🛠️ تکنولوژی‌های جدید:</h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">MongoDB 8.0</span>
+                        <span class="tech-badge">Mongoose 8.20</span>
+                        <span class="tech-badge">JWT 9.0.2</span>
+                        <span class="tech-badge">bcryptjs 3.0.3</span>
+                        <span class="tech-badge">Rate Limit 8.2.1</span>
+                        <span class="tech-badge">Express Validator</span>
+                        <span class="tech-badge">Docker</span>
+                        <span class="tech-badge">Docker Compose</span>
+                    </div>
+
+                    <h3>📦 API های جدید:</h3>
+                    <table>
+                        <tr>
+                            <th>توضیحات</th>
+                            <th>Endpoint</th>
+                        </tr>
+                        <tr>
+                            <td>ثبت‌نام کاربر</td>
+                            <td>POST /api/auth/register</td>
+                        </tr>
+                        <tr>
+                            <td>ورود کاربر</td>
+                            <td>POST /api/auth/login</td>
+                        </tr>
+                        <tr>
+                            <td>اطلاعات کاربر</td>
+                            <td>GET /api/auth/me</td>
+                        </tr>
+                        <tr>
+                            <td>آمار TODO ها</td>
+                            <td>GET /api/todos/stats</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Architecture -->
+            <div class="section">
+                <h2>🏗️ معماری نهایی</h2>
+                <div class="code-snippet">
+                    <code>Client → Helmet → CORS → Compression → Morgan → 
+Body Parser → Format → Rate Limiter → JWT Auth → 
+Route → Controller → Model → MongoDB → Response</code>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="section">
+                <h2>📊 آمار کلی</h2>
+                <table>
+                    <tr>
+                        <th>نسخه</th>
+                        <th>کاربرد</th>
+                        <th>کتابخانه</th>
+                    </tr>
+                    <tr>
+                        <td>4.21.2</td>
+                        <td>Backend Framework</td>
+                        <td>express</td>
+                    </tr>
+                    <tr>
+                        <td>8.20.0</td>
+                        <td>MongoDB ODM</td>
+                        <td>mongoose</td>
+                    </tr>
+                    <tr>
+                        <td>9.0.2</td>
+                        <td>JWT Auth</td>
+                        <td>jsonwebtoken</td>
+                    </tr>
+                    <tr>
+                        <td>3.0.3</td>
+                        <td>Password Hash</td>
+                        <td>bcryptjs</td>
+                    </tr>
+                    <tr>
+                        <td>8.2.1</td>
+                        <td>Rate Limiting</td>
+                        <td>express-rate-limit</td>
+                    </tr>
+                    <tr>
+                        <td>7.2.1</td>
+                        <td>Validation</td>
+                        <td>express-validator</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Conclusion -->
+            <div class="section">
+                <h2>🎯 نتیجه‌گیری</h2>
+                <p style="font-size: 1.1em; line-height: 2;">
+                    پروژه <strong>TODO Dashboard</strong> با موفقیت در سه فاز توسعه یافت. از frontend ساده
+                    تا full-stack حرفه‌ای با MongoDB، JWT، Rate Limiting، HTTPS، MVC و Docker.
+                </p>
+                <ul style="margin: 20px 40px; font-size: 1.05em; line-height: 2;">
+                    <li>✅ UI مدرن و responsive</li>
+                    <li>✅ REST API کامل با 11 endpoint</li>
+                    <li>✅ MongoDB با Mongoose</li>
+                    <li>✅ Authentication امن با JWT</li>
+                    <li>✅ Rate Limiting چند لایه</li>
+                    <li>✅ HTTPS support</li>
+                    <li>✅ معماری MVC</li>
+                    <li>✅ Docker containerization</li>
+                    <li>✅ مستندات جامع</li>
+                    <li>✅ Production ready</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>📊 TODO Dashboard - Complete Project Report</strong></p>
+            <p style="margin: 15px 0;">عارفه ضرابیان | 40134693 | z.arefeh.za@gmail.com</p>
+            <p>GitHub: <a href="https://github.com/Irene-03/todo-list-app" target="_blank">github.com/Irene-03/todo-list-app</a></p>
+            <p style="margin-top: 20px; opacity: 0.8;">© 2024 | Node.js + Express + MongoDB + Docker</p>
+        </div>
+    </div>
+</body>
+</html>

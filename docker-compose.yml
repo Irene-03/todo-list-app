@@ -1,0 +1,54 @@
+# Docker Compose Configuration
+# Phase 3: Complete Stack with MongoDB
+
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:8.0
+    container_name: todo-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: todo-app
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - todo-network
+
+  # Express Application
+  app:
+    build: .
+    container_name: todo-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "3443:3443"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HTTPS_PORT: 3443
+      MONGODB_URI: mongodb://admin:admin123@mongodb:27017/todo-app?authSource=admin
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      JWT_EXPIRE: 7d
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001
+    depends_on:
+      - mongodb
+    networks:
+      - todo-network
+    volumes:
+      - ./cert:/app/cert
+      - ./access.log:/app/access.log
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  todo-network:
+    driver: bridge

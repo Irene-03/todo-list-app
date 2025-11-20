@@ -1,0 +1,71 @@
+# Docker Compose for Production
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: todo-mongodb-prod
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-change-this-password}
+      MONGO_INITDB_DATABASE: todo-app
+    volumes:
+      - mongodb_data_prod:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - todo-network-prod
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: todo-app-prod
+    restart: always
+    ports:
+      - "80:3000"
+      - "443:3443"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HTTPS_PORT: 3443
+      MONGODB_URI: mongodb://${MONGO_USERNAME:-admin}:${MONGO_PASSWORD:-change-this-password}@mongodb:27017/todo-app?authSource=admin
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE: 7d
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - todo-network-prod
+    volumes:
+      - ./cert:/app/cert:ro
+      - app_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+volumes:
+  mongodb_data_prod:
+    driver: local
+  app_logs:
+    driver: local
+
+networks:
+  todo-network-prod:
+    driver: bridge
