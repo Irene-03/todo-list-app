@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TODO Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e6ed;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            border: none;
+            background: transparent;
+            font-size: 1em;
+        }
+
+        .auth-tab:hover {
+            background: #e9ecef;
+        }
+
+        .auth-tab.active {
+            color: #667eea;
+            background: white;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .auth-content {
+            padding: 35px 30px;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #95a5a6;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .checkbox-group label {
+            color: #6c757d;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            display: none;
+            animation: shake 0.4s;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: #e0e6ed;
+            border-radius: 2px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .password-strength.show {
+            display: block;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .strength-weak { 
+            width: 33%; 
+            background: #e74c3c; 
+        }
+
+        .strength-medium { 
+            width: 66%; 
+            background: #f39c12; 
+        }
+
+        .strength-strong { 
+            width: 100%; 
+            background: #27ae60; 
+        }
+
+        .info-text {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.85em;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 10px;
+            }
+
+            .auth-header {
+                padding: 30px 20px;
+            }
+
+            .auth-header h1 {
+                font-size: 1.6em;
+            }
+
+            .auth-content {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>📝 TODO Dashboard</h1>
+            <p>Manage your tasks efficiently</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">Login</button>
+            <button class="auth-tab" data-tab="register">Register</button>
+        </div>
+
+        <div class="auth-content">
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="error-message" id="loginError"></div>
+                <div class="success-message" id="loginSuccess"></div>
+
+                <div class="form-group">
+                    <label for="loginEmail">Email or Username</label>
+                    <input 
+                        type="text" 
+                        id="loginEmail" 
+                        placeholder="Enter your email or username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input 
+                        type="password" 
+                        id="loginPassword" 
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="keepLoggedIn" checked>
+                    <label for="keepLoggedIn">Keep me logged in</label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="loginBtn">
+                    Login
+                </button>
+
+                <p class="info-text">New user? Switch to Register tab</p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="error-message" id="registerError"></div>
+                <div class="success-message" id="registerSuccess"></div>
+
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <input 
+                        type="text" 
+                        id="registerUsername" 
+                        placeholder="Choose a username"
+                        pattern="[a-zA-Z0-9_]{3,30}"
+                        title="3-30 characters, letters, numbers, and underscores only"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input 
+                        type="email" 
+                        id="registerEmail" 
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input 
+                        type="password" 
+                        id="registerPassword" 
+                        placeholder="Create a strong password"
+                        minlength="6"
+                        required
+                    >
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="password-strength-bar"></div>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="keepLoggedInRegister" checked>
+                    <label for="keepLoggedInRegister">Keep me logged in</label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="registerBtn">
+                    Create Account
+                </button>
+
+                <p class="info-text">Already have an account? Switch to Login tab</p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+
+        // Tab switching
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.dataset.tab;
+                
+                // Update active tab
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update active form
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                document.getElementById(`${targetTab}Form`).classList.add('active');
+
+                // Clear messages
+                clearMessages();
+            });
+        });
+
+        // Password strength checker
+        const registerPassword = document.getElementById('registerPassword');
+        const passwordStrength = document.getElementById('passwordStrength');
+        const strengthBar = passwordStrength.querySelector('.password-strength-bar');
+
+        registerPassword.addEventListener('input', (e) => {
+            const password = e.target.value;
+            if (password.length === 0) {
+                passwordStrength.classList.remove('show');
+                return;
+            }
+
+            passwordStrength.classList.add('show');
+            
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (password.length >= 10) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            strengthBar.className = 'password-strength-bar';
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+            } else {
+                strengthBar.classList.add('strength-strong');
+            }
+        });
+
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const emailOrUsername = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const keepLoggedIn = document.getElementById('keepLoggedIn').checked;
+
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = 'Logging in<span class="loading"></span>';
+            clearMessages();
+
+            try {
+                // Determine if input is email or username
+                const isEmail = emailOrUsername.includes('@');
+                const payload = {
+                    password,
+                    [isEmail ? 'email' : 'username']: emailOrUsername
+                };
+
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                // Store token based on keep logged in preference
+                const storage = keepLoggedIn ? localStorage : sessionStorage;
+                storage.setItem('token', data.data.token);
+                storage.setItem('user', JSON.stringify(data.data.user));
+
+                // Show success message
+                showMessage('loginSuccess', 'Login successful! Redirecting...');
+
+                // Redirect to main app
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+
+            } catch (error) {
+                showMessage('loginError', error.message);
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        });
+
+        // Register form
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const registerBtn = document.getElementById('registerBtn');
+            const username = document.getElementById('registerUsername').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const keepLoggedIn = document.getElementById('keepLoggedInRegister').checked;
+
+            // Disable button and show loading
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = 'Creating account<span class="loading"></span>';
+            clearMessages();
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Registration failed');
+                }
+
+                // Store token based on keep logged in preference
+                const storage = keepLoggedIn ? localStorage : sessionStorage;
+                storage.setItem('token', data.data.token);
+                storage.setItem('user', JSON.stringify(data.data.user));
+
+                // Show success message
+                showMessage('registerSuccess', 'Account created! Redirecting...');
+
+                // Redirect to main app
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+
+            } catch (error) {
+                showMessage('registerError', error.message);
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Create Account';
+            }
+        });
+
+        function showMessage(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.add('show');
+        }
+
+        function clearMessages() {
+            document.querySelectorAll('.error-message, .success-message').forEach(el => {
+                el.classList.remove('show');
+            });
+        }
+
+        // Check if already logged in
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (token) {
+            // Verify token is still valid
+            fetch(`${API_URL}/api/auth/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

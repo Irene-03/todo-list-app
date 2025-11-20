@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screenshots Guide - TODO Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #764ba2;
+            margin: 30px 0 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .screenshot-box {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            margin: 20px 0;
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .screenshot-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .screenshot-box p {
+            color: #666;
+            font-size: 0.95em;
+            max-width: 500px;
+        }
+        .instructions {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .instructions h3 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+        .instructions ol {
+            margin-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+        }
+        .urls {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .urls code {
+            background: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 5px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 TODO Dashboard Screenshots Guide</h1>
+        <p style="color: #666; margin-bottom: 30px;">
+            این صفحه برای راهنمایی گرفتن اسکرین‌شات از بخش‌های مختلف پروژه است.
+        </p>
+
+        <div class="instructions">
+            <h3>📋 دستورالعمل گرفتن اسکرین‌شات:</h3>
+            <ol>
+                <li>از هر صفحه که در زیر لیست شده، یک اسکرین‌شات تمام صفحه بگیرید</li>
+                <li>برای اسکرین‌شات در Windows: کلید <strong>Windows + Shift + S</strong></li>
+                <li>یا از ابزار <strong>Snipping Tool</strong> استفاده کنید</li>
+                <li>تصاویر را با نام‌های مشخص ذخیره کنید (مثلاً: login-page.png)</li>
+                <li>تصاویر را در پوشه screenshots/ پروژه قرار دهید</li>
+            </ol>
+        </div>
+
+        <div class="urls">
+            <h3>🔗 URL های مورد نیاز:</h3>
+            <p><strong>اصلی:</strong> <code>http://localhost:3000</code></p>
+            <p><strong>Login/Register:</strong> <code>http://localhost:3000/auth.html</code></p>
+            <p><strong>API Docs:</strong> <code>http://localhost:3000/api/auth/me</code></p>
+        </div>
+
+        <h2>📱 اسکرین‌شات‌های مورد نیاز:</h2>
+
+        <div class="screenshot-box">
+            <h3>1️⃣ صفحه Login/Register</h3>
+            <p>
+                نمایش فرم ورود و ثبت‌نام با دکمه "Keep me logged in"
+                <br><br>
+                <strong>URL:</strong> http://localhost:3000/auth.html
+                <br>
+                <strong>نام فایل:</strong> 01-login-register.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>2️⃣ صفحه اصلی Dashboard</h3>
+            <p>
+                نمایش لیست TODO ها با sidebar و top bar
+                <br><br>
+                <strong>URL:</strong> http://localhost:3000
+                <br>
+                <strong>نام فایل:</strong> 02-main-dashboard.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>3️⃣ افزودن TODO جدید</h3>
+<p>
+                مودال افزودن TODO با فیلدهای مختلف
+                <br><br>
+                <strong>کلیک روی:</strong> New Task button
+                <br>
+                <strong>نام فایل:</strong> 03-add-todo-modal.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>4️⃣ لیست TODO ها با فیلترها</h3>
+            <p>
+                نمایش TODO های مختلف با priority و filters
+                <br><br>
+                <strong>URL:</strong> http://localhost:3000
+                <br>
+                <strong>نام فایل:</strong> 04-todos-with-filters.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>5️⃣ MongoDB Connection</h3>
+            <p>
+                Console log نمایش اتصال موفق MongoDB
+                <br><br>
+                <strong>مکان:</strong> Terminal/PowerShell
+                <br>
+                <strong>نام فایل:</strong> 05-mongodb-connected.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>6️⃣ Postman API Test</h3>
+            <p>
+                تست یکی از endpoint ها با Postman
+                <br><br>
+                <strong>مثال:</strong> POST /api/auth/register
+                <br>
+                <strong>نام فایل:</strong> 06-postman-api-test.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>7️⃣ JWT Token</h3>
+            <p>
+                نمایش token در localStorage یا response
+                <br><br>
+                <strong>مکان:</strong> Browser DevTools > Application > Local Storage
+                <br>
+                <strong>نام فایل:</strong> 07-jwt-token.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>8️⃣ Rate Limiting</h3>
+            <p>
+                خطای 429 Too Many Requests
+                <br><br>
+                <strong>روش:</strong> بیش از 5 بار login اشتباه
+                <br>
+                <strong>نام فایل:</strong> 08-rate-limiting.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>9️⃣ Docker Running</h3>
+            <p>
+                دستور docker-compose up و لاگ‌ها
+                <br><br>
+                <strong>دستور:</strong> docker-compose up -d && docker-compose logs
+                <br>
+                <strong>نام فایل:</strong> 09-docker-running.png
+            </p>
+        </div>
+
+        <div class="screenshot-box">
+            <h3>🔟 User Profile</h3>
+            <p>
+                نمایش نام کاربر و دکمه logout در top bar
+                <br><br>
+                <strong>URL:</strong> http://localhost:3000
+                <br>
+                <strong>نام فایل:</strong> 10-user-profile.png
+            </p>
+        </div>
+
+        <div style="background: #d4edda; border-left: 4px solid #28a745; padding: 20px; margin: 30px 0; border-radius: 5px;">
+            <h3 style="color: #155724; margin-bottom: 10px;">✅ بعد از گرفتن اسکرین‌شات‌ها:</h3>
+            <ol style="margin-left: 20px; color: #155724;">
+                <li>همه تصاویر را در پوشه <code>screenshots/</code> قرار دهید</li>
+                <li>فایل PHASE3_REPORT.html را باز کنید</li>
+                <li>تگ‌های &lt;img&gt; را با مسیر تصاویر اضافه کنید</li>
+                <li>گزارش نهایی را مرور کنید</li>
+            </ol>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e6ed;">
+            <p style="color: #666;">
+                <strong>Project:</strong> TODO Dashboard Phase 3<br>
+                <strong>Student:</strong> عارفه ضرابیان (40134693)
+            </p>
+        </div>
+    </div>
+</body>
+</html>

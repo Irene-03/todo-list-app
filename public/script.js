@@ -4,6 +4,65 @@
 
 const API_BASE = "/api/todos";
 
+// ======================================================================
+// JWT AUTHENTICATION
+// ======================================================================
+function getToken() {
+    return localStorage.getItem('token') || sessionStorage.getItem('token');
+}
+
+function getUser() {
+    const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+    window.location.href = '/auth.html';
+}
+
+function checkAuth() {
+    const token = getToken();
+    if (!token) {
+        window.location.href = '/auth.html';
+        return false;
+    }
+    return true;
+}
+
+// Check authentication on page load
+if (!checkAuth()) {
+    throw new Error('Not authenticated');
+}
+
+// API helper with JWT
+async function apiRequest(url, options = {}) {
+    const token = getToken();
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+    
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    const response = await fetch(url, {
+        ...options,
+        headers
+    });
+    
+    if (response.status === 401) {
+        logout();
+        throw new Error('Session expired. Please login again.');
+    }
+    
+    return response;
+}
+
 // Current filters
 let currentCategory = "today";
 let currentStatus = "all";
@@ -119,10 +178,19 @@ function showMessage(text, type = "error") {
 }
 
 async function fetchJSON(url, options = {}) {
+  const token = getToken();
   const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    },
     ...options
   });
+
+  if (res.status === 401) {
+    logout();
+    throw new Error('Session expired. Please login again.');
+  }
 
   if (!res.ok) {
     try {
@@ -1303,6 +1371,26 @@ viewBtns.forEach((btn, idx) => {
     toggleViewMode();
   });
 });
+
+// Logout functionality
+const logoutBtn = document.getElementById('logoutBtn');
+const userAvatar = document.getElementById('userAvatar');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', logout);
+}
+if (userAvatar) {
+  userAvatar.addEventListener('click', logout);
+  userAvatar.style.cursor = 'pointer';
+}
+
+// Display user info
+const user = getUser();
+if (user) {
+  const userName = document.getElementById('userName');
+  if (userName) {
+    userName.textContent = user.username || user.email;
+  }
+}
 
 // INIT APP
 loadTodos();

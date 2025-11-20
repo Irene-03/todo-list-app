@@ -87,6 +87,11 @@ app.use('/api', apiLimiter);
 // Static files (frontend)
 app.use(express.static(path.join(__dirname, "public")));
 
+// Redirect root to auth page if no token (handled by frontend)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // API routes
 app.use("/api/auth", authRouter);
 app.use("/api/todos", todosRouter);
