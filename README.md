@@ -9,9 +9,28 @@
 
 **A professional RESTful API with MongoDB, JWT Authentication, Rate Limiting, and HTTPS support**
 
-[Features](#-features) • [Installation](#-installation) • [API Documentation](#-api-documentation) • [Testing](#-testing) • [Security](#-security)
+[Features](#-features) • [Installation](#-installation) • [API Documentation](#-api-documentation) • [Testing](#-testing) • [Security](#-security) • [Documentation](#-documentation)
 
 </div>
+
+---
+
+## 📁 Project Structure
+
+For detailed project structure, see **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)**
+
+```
+todo-project-v2.2/
+├── config/          # Database configuration
+├── controllers/     # MVC Controllers
+├── models/          # Mongoose Models
+├── routes/          # API Routes
+├── middleware/      # Custom Middleware
+├── public/          # Frontend (HTML, CSS, JS)
+├── docs/            # Technical Documentation
+├── reports/         # HTML Reports
+└── screenshots/     # Project Screenshots
+```
 
 ---
 
@@ -571,6 +590,26 @@ Response (Formatted JSON)
 - Email: z.arefeh.za@gmail.com
 - GitHub: [@Irene-03](https://github.com/Irene-03)
 - Repository: [todo-list-app](https://github.com/Irene-03/todo-list-app)
+
+---
+
+## 📚 Documentation
+
+### 📖 Technical Guides (in `docs/` folder)
+- **[MONGODB_SETUP.md](./docs/MONGODB_SETUP.md)** - MongoDB installation (Local + Atlas)
+- **[MONGODB_ATLAS_SETUP.md](./docs/MONGODB_ATLAS_SETUP.md)** - Quick Atlas setup (Persian)
+- **[SSL_SETUP.md](./docs/SSL_SETUP.md)** - SSL certificate generation
+- **[DOCKER_GUIDE.md](./docs/DOCKER_GUIDE.md)** - Complete Docker guide
+- **[API_TESTING_GUIDE.md](./docs/API_TESTING_GUIDE.md)** - API testing with Postman
+
+### 📊 Project Reports (in `reports/` folder)
+- **[PHASE1_REPORT.html](./reports/PHASE1_REPORT.html)** - Phase 1 report (Frontend)
+- **[PHASE3_REPORT.html](./reports/PHASE3_REPORT.html)** - Phase 3 report (with screenshots)
+- **[PROJECT_FULL_REPORT.html](./reports/PROJECT_FULL_REPORT.html)** - Complete project report
+
+### 📸 Screenshots
+- Available in `screenshots/` folder
+- Guide: `http://localhost:3000/screenshots-guide.html`
 
 ---
 

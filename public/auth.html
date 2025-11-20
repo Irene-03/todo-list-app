@@ -499,10 +499,10 @@
                 // Show success message
                 showMessage('loginSuccess', 'Login successful! Redirecting...');
 
-                // Redirect to main app
+                // Redirect to main app (use replace to prevent back button issues)
                 setTimeout(() => {
-                    window.location.href = '/';
-                }, 1000);
+                    window.location.replace('/');
+                }, 800);
 
             } catch (error) {
                 showMessage('loginError', error.message);
@@ -549,10 +549,10 @@
                 // Show success message
                 showMessage('registerSuccess', 'Account created! Redirecting...');
 
-                // Redirect to main app
+                // Redirect to main app (use replace to prevent back button issues)
                 setTimeout(() => {
-                    window.location.href = '/';
-                }, 1000);
+                    window.location.replace('/');
+                }, 800);
 
             } catch (error) {
                 showMessage('registerError', error.message);
@@ -584,7 +584,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = '/';
+                    window.location.replace('/');
                 }
             });
         }

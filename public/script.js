@@ -27,15 +27,18 @@ function logout() {
 function checkAuth() {
     const token = getToken();
     if (!token) {
-        window.location.href = '/auth.html';
+        // Redirect and stop execution
+        window.location.replace('/auth.html');
         return false;
     }
     return true;
 }
 
-// Check authentication on page load
-if (!checkAuth()) {
-    throw new Error('Not authenticated');
+// Check authentication on page load - Stop execution if not authenticated
+const isAuthenticated = checkAuth();
+if (!isAuthenticated) {
+    // Stop script execution
+    throw new Error('Redirecting to login...');
 }
 
 // API helper with JWT
