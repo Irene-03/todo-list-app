@@ -1,0 +1,78 @@
+# Docker Compose Development Configuration
+# Use this for local development with hot reload
+
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:8.0
+    container_name: todo-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: todo-app
+    volumes:
+      - mongodb_data_dev:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - todo-network-dev
+
+  # Express Application (Development Mode)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: todo-app-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "3443:3443"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      HTTPS_PORT: 3443
+      MONGODB_URI: mongodb://admin:admin123@mongodb:27017/todo-app?authSource=admin
+      JWT_SECRET: dev-secret-key-not-for-production
+      JWT_EXPIRE: 7d
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:5173
+    depends_on:
+      - mongodb
+    networks:
+      - todo-network-dev
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/node_modules
+      - ./cert:/app/cert
+      - ./access.log:/app/access.log
+    command: npm run dev
+
+  # Optional: MongoDB Express (Database UI)
+  mongo-express:
+    image: mongo-express:latest
+    container_name: todo-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin123@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    depends_on:
+      - mongodb
+    networks:
+      - todo-network-dev
+
+volumes:
+  mongodb_data_dev:
+    driver: local
+
+networks:
+  todo-network-dev:
+    driver: bridge

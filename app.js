@@ -86,9 +86,16 @@ app.use('/api', apiLimiter);
 
 // Static files (frontend)
 app.use(express.static(path.join(__dirname, "public")));
+app.use('/reports', express.static(path.join(__dirname, "reports")));
+app.use('/docs', express.static(path.join(__dirname, "docs")));
 
-// Redirect root to auth page if no token (handled by frontend)
+// Welcome page at root
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'welcome.html'));
+});
+
+// Dashboard (requires auth - handled by frontend)
+app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

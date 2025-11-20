@@ -406,6 +406,25 @@
     <script>
         const API_URL = window.location.origin;
 
+        function unwrapResponse(payload) {
+            let current = payload;
+            let depth = 0;
+
+            while (
+                current &&
+                typeof current === 'object' &&
+                !Array.isArray(current) &&
+                Object.prototype.hasOwnProperty.call(current, 'success') &&
+                Object.prototype.hasOwnProperty.call(current, 'data') &&
+                depth < 5
+            ) {
+                current = current.data;
+                depth += 1;
+            }
+
+            return current;
+        }
+
         // Tab switching
         document.querySelectorAll('.auth-tab').forEach(tab => {
             tab.addEventListener('click', () => {
@@ -472,7 +491,7 @@
             try {
                 // Determine if input is email or username
                 const isEmail = emailOrUsername.includes('@');
-                const payload = {
+                const credentials = {
                     password,
                     [isEmail ? 'email' : 'username']: emailOrUsername
                 };
@@ -482,27 +501,53 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(credentials)
                 });
 
-                const data = await response.json();
+                const raw = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'Login failed');
+                    const errorPayload = unwrapResponse(raw);
+                    const message = (errorPayload && errorPayload.error && errorPayload.error.message) || raw.message || 'Login failed';
+                    throw new Error(message);
                 }
 
-                // Store token based on keep logged in preference
+                const responseData = unwrapResponse(raw) || {};
+                const { token, user } = responseData;
+
+                if (!token || !user) {
+                    throw new Error('Invalid server response. Please try again.');
+                }
+
+                console.log('🔑 LOGIN SUCCESS');
+                console.log('Token received:', token ? 'YES' : 'NO');
+                console.log('Token length:', token.length);
+                console.log('Storage type:', keepLoggedIn ? 'localStorage' : 'sessionStorage');
+
+                // Clear all storage first
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Store token and user
                 const storage = keepLoggedIn ? localStorage : sessionStorage;
-                storage.setItem('token', data.data.token);
-                storage.setItem('user', JSON.stringify(data.data.user));
+                storage.setItem('token', token);
+                storage.setItem('user', JSON.stringify(user));
+                
+                // Verify immediately
+                const verifiedToken = storage.getItem('token');
+                console.log('✅ Token stored:', verifiedToken ? 'YES' : 'NO');
+                console.log('Token matches:', verifiedToken === token ? 'YES' : 'NO');
 
-                // Show success message
+                // Show success and redirect
                 showMessage('loginSuccess', 'Login successful! Redirecting...');
-
-                // Redirect to main app (use replace to prevent back button issues)
-                setTimeout(() => {
-                    window.location.replace('/');
-                }, 800);
+                
+                // Wait a bit then redirect
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                console.log('🚀 Redirecting to dashboard...');
+                console.log('Final token check:', storage.getItem('token') ? 'YES' : 'NO');
+                
+                window.location.replace('/dashboard');
 
             } catch (error) {
                 showMessage('loginError', error.message);
@@ -535,24 +580,43 @@
                     body: JSON.stringify({ username, email, password })
                 });
 
-                const data = await response.json();
+                const raw = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || 'Registration failed');
+                    const errorPayload = unwrapResponse(raw);
+                    const message = (errorPayload && errorPayload.error && errorPayload.error.message) || raw.message || 'Registration failed';
+                    throw new Error(message);
                 }
 
-                // Store token based on keep logged in preference
+                const responseData = unwrapResponse(raw) || {};
+                const { token, user } = responseData;
+
+                if (!token || !user) {
+                    throw new Error('Invalid server response. Please try again.');
+                }
+
+                console.log('🎉 REGISTER SUCCESS');
+                console.log('Token received:', token ? 'YES' : 'NO');
+                console.log('Token length:', token.length);
+                console.log('Storage type:', keepLoggedIn ? 'localStorage' : 'sessionStorage');
+
+                // Clear all storage first
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Store token and user
                 const storage = keepLoggedIn ? localStorage : sessionStorage;
-                storage.setItem('token', data.data.token);
-                storage.setItem('user', JSON.stringify(data.data.user));
+                storage.setItem('token', token);
+                storage.setItem('user', JSON.stringify(user));
 
-                // Show success message
+                // Show success and redirect
                 showMessage('registerSuccess', 'Account created! Redirecting...');
+                
+                // Wait a bit then redirect
+                await new Promise(resolve => setTimeout(resolve, 500));
 
-                // Redirect to main app (use replace to prevent back button issues)
-                setTimeout(() => {
-                    window.location.replace('/');
-                }, 800);
+                console.log('🚀 Redirecting to dashboard...');
+                window.location.replace('/dashboard');
 
             } catch (error) {
                 showMessage('registerError', error.message);
@@ -573,21 +637,7 @@
             });
         }
 
-        // Check if already logged in
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (token) {
-            // Verify token is still valid
-            fetch(`${API_URL}/api/auth/me`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.replace('/');
-                }
-            });
-        }
+        // No auto-redirect - let user choose login or register
     </script>
 </body>
 </html>

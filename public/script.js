@@ -27,18 +27,10 @@ function logout() {
 function checkAuth() {
     const token = getToken();
     if (!token) {
-        // Redirect and stop execution
-        window.location.replace('/auth.html');
+        window.location.href = '/auth.html';
         return false;
     }
     return true;
-}
-
-// Check authentication on page load - Stop execution if not authenticated
-const isAuthenticated = checkAuth();
-if (!isAuthenticated) {
-    // Stop script execution
-    throw new Error('Redirecting to login...');
 }
 
 // API helper with JWT
@@ -180,19 +172,57 @@ function showMessage(text, type = "error") {
   setTimeout(() => el.message.classList.add("hidden"), 3000);
 }
 
+function normalizeApiResponse(payload) {
+  let current = payload;
+  let depth = 0;
+
+  while (
+    current &&
+    typeof current === "object" &&
+    !Array.isArray(current) &&
+    Object.prototype.hasOwnProperty.call(current, "success") &&
+    Object.prototype.hasOwnProperty.call(current, "data") &&
+    depth < 5
+  ) {
+    current = current.data;
+    depth += 1;
+  }
+
+  return current;
+}
+
 async function fetchJSON(url, options = {}) {
   const token = getToken();
+  
+  console.log('📡 fetchJSON called');
+  console.log('URL:', url);
+  console.log('Token:', token ? 'EXISTS' : 'NULL');
+  
+  if (!token) {
+    console.log('❌ No token in fetchJSON');
+    window.location.href = '/auth.html';
+    throw new Error('Authentication required');
+  }
+  
+  console.log('✅ Sending request with token:', token.substring(0, 30) + '...');
+  
+  const headers = { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  };
+  
+  console.log('Headers:', JSON.stringify(headers));
+  
   const res = await fetch(url, {
-    headers: { 
-      "Content-Type": "application/json",
-      ...(token ? { "Authorization": `Bearer ${token}` } : {})
-    },
+    headers,
     ...options
   });
+  
+  console.log('Response status:', res.status);
 
   if (res.status === 401) {
     logout();
-    throw new Error('Session expired. Please login again.');
+    return;
   }
 
   if (!res.ok) {
@@ -212,13 +242,13 @@ async function fetchJSON(url, options = {}) {
   }
 
   if (res.status === 204) return null;
-  
+
   const jsonData = await res.json();
-  
+  const normalized = normalizeApiResponse(jsonData);
+
   // Handle new response format from Phase 2 (with formatResponse middleware)
-  // Response format: { success: true, data: {...}, timestamp: "..." }
-  if (jsonData && jsonData.success !== undefined && jsonData.data !== undefined) {
-    return jsonData.data;
+  if (normalized !== undefined) {
+    return normalized;
   }
   
   // Fallback for old format or direct data
@@ -1386,15 +1416,42 @@ if (userAvatar) {
   userAvatar.style.cursor = 'pointer';
 }
 
-// Display user info
-const user = getUser();
-if (user) {
-  const userName = document.getElementById('userName');
-  if (userName) {
-    userName.textContent = user.username || user.email;
+// INIT APP
+async function initApp() {
+  console.log('🚀 initApp called');
+  console.log('localStorage.token:', localStorage.getItem('token') ? 'EXISTS' : 'NULL');
+  console.log('sessionStorage.token:', sessionStorage.getItem('token') ? 'EXISTS' : 'NULL');
+  
+  const token = getToken();
+  console.log('getToken() result:', token ? 'FOUND' : 'NOT FOUND');
+  
+  if (!token) {
+    console.log('❌ No token - redirecting to auth');
+    window.location.href = '/auth.html';
+    return;
   }
+  
+  console.log('✅ Token found, length:', token.length);
+  console.log('Token preview:', token.substring(0, 50) + '...');
+
+  // Display user info (after DOM is ready)
+  const user = getUser();
+  if (user) {
+    const userName = document.getElementById('userName');
+    if (userName) {
+      userName.textContent = user.username || user.email;
+    }
+  }
+  
+  await loadTodos();
+  await initCalendar();
 }
 
-// INIT APP
-loadTodos();
-initCalendar();
+// Start app
+console.log('🔥🔥🔥 SCRIPT LOADED - VERSION 20251120-1605 🔥🔥🔥');
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
