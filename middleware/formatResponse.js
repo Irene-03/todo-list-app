@@ -4,26 +4,34 @@
 // ======================================================================
 
 function formatResponse(req, res, next) {
-  // Store original json method
   const originalJson = res.json.bind(res);
-  
-  // Override json method
-  res.json = function(data) {
-    // If error response (status >= 400), don't format
-    if (res.statusCode >= 400) {
+
+  res.setResponseMeta = (meta = {}) => {
+    res.locals.responseMeta = meta && Object.keys(meta).length ? meta : undefined;
+  };
+
+  res.skipStandardFormat = () => {
+    res.locals.skipStandardFormat = true;
+  };
+
+  res.json = function format(data) {
+    if (res.locals.skipStandardFormat || res.statusCode >= 400) {
       return originalJson(data);
     }
-    
-    // Format success response
+
     const formattedResponse = {
       success: true,
-      data: data,
+      data: data ?? null,
       timestamp: new Date().toISOString()
     };
-    
+
+    if (res.locals.responseMeta) {
+      formattedResponse.meta = res.locals.responseMeta;
+    }
+
     return originalJson(formattedResponse);
   };
-  
+
   next();
 }
 

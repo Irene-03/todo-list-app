@@ -1,4 +1,84 @@
 # Docker Compose Development Configuration
+# Phase 2: Enhanced development environment
+
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:8.0
+    container_name: todo-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: todo-app-dev
+    volumes:
+      - mongodb_dev_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - todo-dev-network
+
+  # Express Application (Development)
+  app:
+    build: 
+      context: .
+      target: production
+    container_name: todo-app-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "3443:3443"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      HTTPS_PORT: 3443
+      MONGODB_URI: mongodb://admin:admin123@mongodb:27017/todo-app-dev?authSource=admin
+      JWT_SECRET: dev-jwt-secret-phase2-2025
+      JWT_EXPIRE: 24h
+      API_KEY: dev-api-key-phase2
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:8080,http://127.0.0.1:3000
+    depends_on:
+      - mongodb
+    networks:
+      - todo-dev-network
+    volumes:
+      # Mount source code for development
+      - .:/app
+      - /app/node_modules
+      - ./cert:/app/cert
+      - dev_logs:/app/logs
+    command: ["npm", "run", "dev"]
+
+  # Mongo Express - Database Management UI
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: todo-mongo-express-dev
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+    depends_on:
+      - mongodb
+    networks:
+      - todo-dev-network
+
+volumes:
+  mongodb_dev_data:
+    driver: local
+  dev_logs:
+    driver: local
+
+networks:
+  todo-dev-network:
+    driver: bridge
 # Use this for local development with hot reload
 
 version: '3.8'

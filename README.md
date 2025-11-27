@@ -1,106 +1,295 @@
-# 📋 TODO Dashboard - Secure API with Express.js
+# 📋 TODO Dashboard - Express.js با میان‌افزارهای پیشرفته
 
 <div align="center">
 
-![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)
+![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
 ![Express.js](https://img.shields.io/badge/Express.js-4.21-blue.svg)
 ![MongoDB](https://img.shields.io/badge/MongoDB-8.0-brightgreen.svg)
-![License](https://img.shields.io/badge/license-MIT-orange.svg)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)
+![Phase](https://img.shields.io/badge/Phase-2%20Complete-success.svg)
 
-**A professional RESTful API with MongoDB, JWT Authentication, Rate Limiting, and HTTPS support**
+**پروژه درس مهندسی اینترنت - TODO API با میان‌افزارهای حرفه‌ای**
 
-[Features](#-features) • [Installation](#-installation) • [API Documentation](#-api-documentation) • [Testing](#-testing) • [Security](#-security) • [Documentation](#-documentation)
+[نصب سریع](#-نصب-سریع) • [فیچرها](#-ویژگی‌های-فاز-دوم) • [API](#-api-endpoints) • [Docker](#-اجرا-با-docker) • [گزارش‌ها](#-گزارش‌ها)
 
 </div>
 
 ---
 
-## 📁 Project Structure
+## 🎯 پروژه نهایی درس مهندسی اینترنت
 
-For detailed project structure, see **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)**
+**دانشجو:** عارفه ضرابیان (40134693)  
+**ایمیل:** z.arefeh.za@gmail.com  
+**GitHub:** [Irene-03/todo-list-app](https://github.com/Irene-03/todo-list-app)
+
+### 📊 وضعیت فازها:
+- ✅ **فاز 1:** REST API پایه با حافظه داخلی
+- ✅ **فاز 2:** میان‌افزارهای پیشرفته (CORS, Helmet, Morgan, Compression, Validation)
+- ✅ **فاز 3:** MongoDB, JWT Authentication, Rate Limiting, Docker
+
+---
+
+## 🚀 ویژگی‌های فاز دوم
+
+### 🛡️ میان‌افزارهای امنیتی
+- **🔒 Helmet:** محافظت از XSS، Clickjacking، MIME Sniffing
+- **🌐 CORS:** کنترل دسترسی Cross-Origin با تنظیمات پیشرفته
+- **⚡ Rate Limiting:** محدودسازی درخواست (3 سطح مختلف)
+- **🔑 API Key:** احراز هویت با کلید API برای تمام endpoints
+
+### 📊 بهینه‌سازی و عملکرد
+- **🗜️ Compression:** فشرده‌سازی پاسخ‌ها (60% کاهش حجم)
+- **📝 Morgan:** لاگ‌گیری حرفه‌ای (فایل + کنسول)
+- **⏱️ Request Timeout:** محدودیت زمانی 10 ثانیه‌ای
+- **🎨 Response Formatting:** قالب استاندارد JSON
+
+### 🗄️ پایگاه داده و احراز هویت
+- **🍃 MongoDB:** جایگزین SQLite با Mongoose ODM
+- **🔐 JWT:** سیستم Token-based authentication  
+- **🔒 bcryptjs:** رمزگذاری امن پسوردها
+- **👤 User Management:** ثبت‌نام، ورود، مدیریت کاربر
+
+---
+
+## 🚀 نصب سریع
+
+### پیش‌نیازها
+- Node.js 18+
+- MongoDB (محلی یا Atlas)
+- Git
+
+### دستورات نصب
+```bash
+# کلون کردن پروژه
+git clone https://github.com/Irene-03/todo-list-app.git
+cd todo-list-app
+
+# نصب وابستگی‌ها
+npm install
+
+# تنظیم متغیرهای محیطی
+cp .env.example .env
+# ویرایش فایل .env
+
+# اجرای پروژه
+npm run dev
+```
+
+**🌐 دسترسی:** http://localhost:3000
+
+---
+
+## 🐳 اجرا با Docker
+
+### شروع سریع
+```bash
+# اجرای کامل سیستم
+docker-compose up -d
+
+# مشاهده لاگ‌ها
+docker-compose logs -f app
+
+# توقف سیستم
+docker-compose down
+```
+
+### محیط توسعه (با Mongo Express)
+```bash
+# اجرا با رابط مدیریت MongoDB
+docker-compose --profile dev up -d
+
+# دسترسی به Mongo Express: http://localhost:8081
+```
+
+### دستورات مفید Docker
+```bash
+# ساخت مجدد image
+docker-compose build --no-cache
+
+# پاک‌سازی volumes
+docker-compose down -v
+
+# مشاهده وضعیت سرویس‌ها
+docker-compose ps
+```
+
+---
+
+## 📡 API Endpoints
+
+### 🔐 احراز هویت
+```http
+POST /api/auth/register
+POST /api/auth/login
+GET  /api/auth/me
+```
+
+### 📝 مدیریت TODO
+```http
+GET    /api/todos           # دریافت لیست
+POST   /api/todos           # ایجاد جدید
+GET    /api/todos/:id       # دریافت یکی
+PUT    /api/todos/:id       # بروزرسانی
+DELETE /api/todos/:id       # حذف
+DELETE /api/todos/completed # حذف تمام انجام شده‌ها
+GET    /api/todos/stats     # آمار
+```
+
+### نمونه درخواست
+```bash
+# ثبت‌نام
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: your-api-key" \
+  -d '{"username":"test","email":"test@test.com","password":"123456"}'
+
+# ایجاد TODO
+curl -X POST http://localhost:3000/api/todos \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: your-api-key" \
+  -d '{"text":"تست TODO","priority":"high"}'
+```
+
+---
+
+## 🛠️ تکنولوژی‌های استفاده شده
+
+| دسته | تکنولوژی |
+|------|-----------|
+| **Runtime** | Node.js 18+ |
+| **Framework** | Express.js 4.21.0 |
+| **Database** | MongoDB 8.0 + Mongoose 8.20.0 |
+| **Security** | Helmet, CORS, Rate Limiter |
+| **Validation** | express-validator 7.3.0 |
+| **Logging** | Morgan 1.10.1 |
+| **Performance** | Compression 1.8.1 |
+| **Auth** | JWT, bcryptjs |
+| **Container** | Docker + Compose |
+
+---
+
+## 🧪 تست‌های فاز دوم
+
+### ✅ تست‌های اجباری
+1. **API Key Validation** - بررسی عدم دسترسی بدون کلید
+2. **CORS Protection** - تست محدودیت origin
+3. **Input Validation** - تست اعتبارسنجی ورودی‌ها  
+4. **Rate Limiting** - تست محدودسازی درخواست
+5. **Standard Response** - تست قالب JSON استاندارد
+
+### نتایج تست
+🖼️ **تصاویر تست:** مشاهده فایل‌های `ex(3).png` تا `ex(7).png` در پوشه `media/`
+
+---
+
+## 📊 گزارش‌ها
+
+### 📋 گزارش‌های HTML
+- **[گزارش فاز دوم کامل](./reports/PHASE2_COMPLETE_REPORT.html)** - گزارش جامع با تصاویر
+- **[خلاصه پیاده‌سازی](./reports/PHASE2_IMPLEMENTED_SUMMARY.html)** - خلاصه اجرا شده
+- **[گزارش تکنیکی کامل](./reports/PROJECT_FULL_REPORT.html)** - مستندات کامل
+
+### 🔍 جزئیات میان‌افزارها
+| میان‌افزار | وضعیت | توضیح |
+|------------|-------|--------|
+| **Helmet** | ✅ فعال | Security headers |
+| **CORS** | ✅ فعال | Dynamic origins از .env |
+| **Morgan** | ✅ فعال | File + Console logging |
+| **Compression** | ✅ فعال | Response compression |
+| **express-validator** | ✅ فعال | Input validation |
+| **formatResponse** | ✅ فعال | Standard JSON wrapper |
+| **apiKeyAuth** | ✅ فعال | X-API-KEY validation |
+| **requestTimeout** | ✅ فعال | 10s timeout |
+| **rateLimiter** | ✅ فعال | 3-tier limiting |
+| **asyncHandler** | ✅ فعال | Async error handling |
+
+---
+
+## 🏗️ ساختار پروژه
 
 ```
 todo-project-v2.2/
-├── config/          # Database configuration
-├── controllers/     # MVC Controllers
-├── models/          # Mongoose Models
-├── routes/          # API Routes
-├── middleware/      # Custom Middleware
-├── public/          # Frontend (HTML, CSS, JS)
-├── docs/            # Technical Documentation
-├── reports/         # HTML Reports
-└── screenshots/     # Project Screenshots
+│
+├── 📁 middleware/           # میان‌افزارهای سفارشی
+│   ├── apiKeyAuth.js        # احراز هویت API Key
+│   ├── formatResponse.js    # قالب‌بندی پاسخ
+│   ├── requestTimeout.js    # مدیریت timeout
+│   ├── rateLimiter.js       # محدودسازی درخواست
+│   ├── asyncHandler.js      # مدیریت async errors
+│   └── errorHandler.js      # مدیریت خطاها
+│
+├── 📁 controllers/          # کنترلرها
+│   ├── authController.js    # منطق احراز هویت
+│   └── todoController.js    # منطق CRUD
+│
+├── 📁 models/              # مدل‌های دیتابیس
+│   ├── user.js             # مدل کاربر
+│   └── todo.js             # مدل TODO
+│
+├── 📁 routes/              # مسیرهای API
+│   ├── auth.js             # مسیرهای احراز هویت
+│   └── todos.js            # مسیرهای TODO
+│
+├── 📁 public/              # فایل‌های فرانت‌اند
+│   ├── index.html          # صفحه اصلی
+│   ├── auth.html           # صفحه ورود/ثبت‌نام
+│   ├── script.js           # منطق جاوااسکریپت
+│   └── style.css           # استایل‌ها
+│
+├── 📁 reports/             # گزارش‌های HTML
+├── 📁 media/               # تصاویر تست
+├── app.js                  # فایل اصلی برنامه
+├── .env                    # تنظیمات محیطی
+├── Dockerfile              # Docker image
+├── docker-compose.yml      # Docker orchestration
+└── package.json            # وابستگی‌ها
 ```
 
 ---
 
-## 🎯 Project Overview
+## 🎯 تحویلی‌های نهایی فاز دوم
 
-This is a comprehensive TODO management application built as part of an Internet Engineering course project. It demonstrates modern backend development practices including:
+### ✅ موارد تحویلی
+- [x] **کد پروژه** - تمام فایل‌های بروزرسانی شده
+- [x] **گزارش HTML** - مستندات کامل با تصاویر
+- [x] **تصاویر تست** - نتایج 5 تست الزامی
+- [x] **Docker Setup** - آماده برای اجرا
+- [x] **API Documentation** - راهنمای کامل استفاده
 
-- **Phase 1:** Basic Express.js REST API with in-memory storage
-- **Phase 2:** SQLite database, Security middlewares (Helmet, CORS), Validation, Compression
-- **Phase 3:** MongoDB integration, JWT authentication, Rate limiting, HTTPS server, MVC architecture
+### 🎓 اطلاعات دانشجو
+**نام:** عارفه ضرابیان  
+**شماره دانشجویی:** 40134693  
+**ایمیل:** z.arefeh.za@gmail.com  
+**GitHub:** https://github.com/Irene-03/todo-list-app  
+**تاریخ تحویل:** 27 آذر 1403
 
 ---
 
-## ✨ Features
+## 📞 پشتیبانی
 
-### 📱 Frontend
-- Modern, responsive UI with dark theme
-- Real-time task management (Create, Read, Update, Delete)
-- Task filtering by status, priority, and custom groups
-- Search functionality
-- Calendar integration for due dates
-- Weather widget
-- Bulk operations
-- Priority levels (low, normal, high)
-- Important tasks marking
-- Custom directories/groups organization
+در صورت بروز مشکل:
+- **Issues:** [GitHub Issues](https://github.com/Irene-03/todo-list-app/issues)
+- **ایمیل:** z.arefeh.za@gmail.com
+- **مستندات:** مشاهده فایل‌های `reports/`
 
-### ⚙️ Backend (Phase 3)
+---
 
-#### 🔐 Authentication & Security
-- **JWT (JSON Web Token)** authentication
-- Password hashing with bcryptjs
-- Token-based authorization
-- Protected routes with middleware
-- User registration and login
-- Role-based access control (user/admin)
+<div align="center">
 
-#### 🗄️ Database
-- **MongoDB** with Mongoose ODM
-- User and Todo schemas with validation
-- Indexes for optimized queries
-- Relationship between users and todos
+**🎓 ساخته شده با ❤️ برای درس مهندسی اینترنت**
 
-#### 🛡️ Security Middlewares
-- **Helmet** - Security headers (XSS, Clickjacking protection)
-- **CORS** - Configurable cross-origin resource sharing
-- **Rate Limiting** - Prevent abuse and DDoS attacks
-  - General API: 100 requests per 15 minutes
-  - Authentication: 5 attempts per 15 minutes
-  - Todo creation: 20 requests per 15 minutes
+⭐ اگر پروژه را پسندیدید، ستاره دهید!
 
-#### 🚀 Performance & Optimization
-- **Compression** - Response compression (60-70% size reduction)
-- **Morgan** - Professional HTTP request logging
-- Response caching
-- Efficient MongoDB queries with indexes
+**Phase 2 Complete** | **Advanced Express Middlewares** | **Production Ready**
 
-#### 🏗️ Architecture
-- **MVC Pattern** - Separation of concerns
-  - Models: Data schemas (User, Todo)
-  - Controllers: Business logic
-  - Routes: API endpoints
-- **Middleware chain** - Modular request processing
-- **Error handling** - Centralized error management
-- **Input validation** - Express Validator
+</div>
 
-#### 🔒 HTTPS Support
-- SSL/TLS encryption
-- Self-signed certificates for development
-- Secure connections on port 3443
+### 🗄️ پایگاه داده و احراز هویت
+- **🍃 MongoDB:** جایگزین SQLite با Mongoose ODM
+- **🔐 JWT:** سیستم Token-based authentication
+- **🔒 bcryptjs:** رمزگذاری امن پسوردها
+- **👤 User Management:** ثبت‌نام، ورود، مدیریت کاربر
 
 ---
 

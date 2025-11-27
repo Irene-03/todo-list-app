@@ -16,6 +16,8 @@ const compression = require("compression");
 const connectDB = require("./config/database");
 const { notFound, errorHandler } = require("./middleware/errorHandler");
 const formatResponse = require("./middleware/formatResponse");
+const apiKeyAuth = require("./middleware/apiKeyAuth");
+const requestTimeout = require("./middleware/requestTimeout");
 const { apiLimiter } = require("./middleware/rateLimiter");
 
 const authRouter = require("./routes/auth");
@@ -62,7 +64,10 @@ app.use(cors({
 // 3. Compression - Reduce response size
 app.use(compression());
 
-// 4. Morgan - HTTP request logging
+// 4. Request Timeout - Prevent hanging requests
+app.use(requestTimeout);
+
+// 5. Morgan - HTTP request logging
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, 'access.log'),
   { flags: 'a' }
@@ -70,15 +75,15 @@ const accessLogStream = fs.createWriteStream(
 app.use(morgan('combined', { stream: accessLogStream })); // Log to file
 app.use(morgan('dev')); // Log to console
 
-// 5. Body parsing
+// 6. Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 6. Format Response - Standardize all responses
+// 7. Format Response - Standardize all responses
 app.use(formatResponse);
 
-// 7. Rate Limiting - Apply to all API routes
-app.use('/api', apiLimiter);
+// 8. Rate Limiting + API Key - Apply to all API routes
+app.use('/api', apiKeyAuth, apiLimiter);
 
 // ======================================================================
 // STATIC FILES & ROUTES
@@ -92,6 +97,17 @@ app.use('/docs', express.static(path.join(__dirname, "docs")));
 // Welcome page at root
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'welcome.html'));
+});
+
+// Health check endpoint (no auth required)
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+    version: require('./package.json').version
+  });
 });
 
 // Dashboard (requires auth - handled by frontend)
@@ -126,6 +142,8 @@ app.listen(PORT, () => {
   console.log(`🌐 CORS origins: ${allowedOrigins.join(', ')}`);
   console.log(`🔐 JWT Authentication enabled`);
   console.log(`⏱️  Rate limiting active`);
+  console.log(`🔑 API key enforcement active`);
+  console.log(`⏳ Request timeout: ${process.env.REQUEST_TIMEOUT_MS || 10000}ms`);
 });
 
 // Start HTTPS server (if certificates exist)

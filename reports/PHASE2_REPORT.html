@@ -256,9 +256,10 @@
             <div class="section">
                 <h2>📝 خلاصه فاز ۲</h2>
                 <p>
-                    در این فاز، پروژه TODO Dashboard به یک برنامه full-stack با قابلیت‌های حرفه‌ای تبدیل شد.
-                    تغییرات اصلی شامل مهاجرت از SQLite به MongoDB، پیاده‌سازی سیستم احراز هویت JWT، افزودن Rate Limiting
-                    برای امنیت، پشتیبانی از HTTPS و بازسازی کد با معماری MVC است.
+                    در این فاز، پروژه TODO Dashboard به یک برنامه full-stack با قابلیت‌های تولیدی تبدیل شد. علاوه بر
+                    مهاجرت کامل به MongoDB و استقرار JWT، مجموعه‌ای از میان‌افزارهای پیشرفته شامل CORS داینامیک، Helmet،
+                    Morgan، Compression، Timeout، اعتبارسنجی express-validator، قالب‌بندی استاندارد پاسخ‌ها و احراز هویت
+                    مبتنی بر API Key پیاده‌سازی شد تا الزامات امنیتی و کارایی فاز دوم به صورت کامل پوشش داده شود.
                 </p>
                 
                 <div class="stats-grid">
@@ -350,6 +351,28 @@
                         </ul>
                         <span class="badge success">✓ کامل</span>
                     </div>
+
+                    <div class="feature-card">
+                        <h4>🛡️ Advanced Middleware Stack</h4>
+                        <ul>
+                            <li>Helmet + CORS + Compression</li>
+                            <li>Morgan با ثبت فایل access.log</li>
+                            <li>API Key Guard و Rate Limit سه‌لایه</li>
+                            <li>Request Timeout و asyncHandler</li>
+                        </ul>
+                        <span class="badge success">✓ کامل</span>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>📤 استانداردسازی پاسخ و ورودی</h4>
+                        <ul>
+                            <li>express-validator برای تمام فرم‌ها</li>
+                            <li>formatResponse با قالب JSON یکسان</li>
+                            <li>گزارش خطای جزئیات‌دار</li>
+                            <li>پوشش تستی validation & error flows</li>
+                        </ul>
+                        <span class="badge success">✓ کامل</span>
+                    </div>
                 </div>
             </div>
 
@@ -373,8 +396,12 @@
 ├── middleware/
 │   ├── authenticateToken.js # JWT Verification
 │   ├── rateLimiter.js       # Rate Limiting
+│   ├── apiKeyAuth.js        # X-API-KEY enforcement
+│   ├── requestTimeout.js    # Timeout middleware
+│   ├── formatResponse.js    # Unified JSON responses
+│   ├── asyncHandler.js      # Async wrapper
 │   ├── errorHandler.js      # Error Handling
-│   └── logger.js            # Request Logging
+│   └── logger.js            # Legacy console logger
 ├── public/                  # Frontend (Phase 1)
 ├── Dockerfile               # Docker Image
 ├── docker-compose.yml       # Docker Orchestration
@@ -384,10 +411,73 @@
 
                 <h3>Middleware Chain:</h3>
                 <div class="code-block">
-                    <code>Request → Helmet → CORS → Compression → Morgan → 
-Body Parser → Format Response → Rate Limiter → 
-JWT Auth → Route Handler → Error Handler → Response</code>
+                    <code>Request → Helmet → CORS → Compression → Request Timeout → Morgan → 
+Body Parser → Format Response → API Key Guard → Rate Limiter → 
+JWT Auth → Route Handler (asyncHandler + Validation) → Error Handler → Response</code>
                 </div>
+
+                <h3>نقش هر میان‌افزار:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Middleware</th>
+                            <th>هدف</th>
+                            <th>رفتار ویژه در پروژه</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Helmet</td>
+                            <td>افزودن هدرهای امنیتی</td>
+                            <td>غیرفعال‌سازی CSP برای توسعه و جلوگیری از XSS/Clickjacking</td>
+                        </tr>
+                        <tr>
+                            <td>CORS</td>
+                            <td>کنترل دامنه‌های مجاز</td>
+                            <td>خواندن ALLOWED_ORIGINS از .env و پشتیبانی از درخواست بدون Origin (Postman)</td>
+                        </tr>
+                        <tr>
+                            <td>Compression</td>
+                            <td>فشرده‌سازی پاسخ‌ها</td>
+                            <td>بهبود سرعت انتقال JSON و فایل‌های استاتیک</td>
+                        </tr>
+                        <tr>
+                            <td>Request Timeout</td>
+                            <td>جلوگیری از درخواست‌های معلق</td>
+                            <td>پاسخ 503 بعد از 10 ثانیه و تمیزسازی تایمر روی finish/close</td>
+                        </tr>
+                        <tr>
+                            <td>Morgan</td>
+                            <td>لاگ استاندارد HTTP</td>
+                            <td>قالب combined داخل access.log + خروجی dev در کنسول</td>
+                        </tr>
+                        <tr>
+                            <td>Format Response</td>
+                            <td>یکسان‌سازی خروجی</td>
+                            <td>افزودن success/data/timestamp و پشتیبانی از meta و skip-format</td>
+                        </tr>
+                        <tr>
+                            <td>API Key Guard</td>
+                            <td>احراز هویت سطح API</td>
+                            <td>نیاز به X-API-KEY مطابق .env برای همه مسیرهای /api</td>
+                        </tr>
+                        <tr>
+                            <td>Rate Limiter</td>
+                            <td>مهار حملات brute-force</td>
+                            <td>سه سطح (عمومی، احراز هویت، ایجاد TODO) با پیام‌های محلی‌سازی شده</td>
+                        </tr>
+                        <tr>
+                            <td>express-validator</td>
+                            <td>اعتبارسنجی ورودی</td>
+                            <td>پوشش همه فیلدهای auth و todo با پیام خطای ساخت‌یافته</td>
+                        </tr>
+                        <tr>
+                            <td>asyncHandler</td>
+                            <td>مدیریت خطای async</td>
+                            <td>حذف try/catch از کنترلرها و هدایت خطا به errorHandler مرکزی</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <!-- Database Schema -->
@@ -542,17 +632,18 @@ Content-Type: application/json
 
 // Response:
 {
-  "success": true,
-  "data": {
-    "user": {
-      "_id": "...",
-      "username": "arefeh",
-      "email": "z.arefeh.za@gmail.com",
-      "role": "user"
+    "success": true,
+    "data": {
+        "user": {
+            "id": "...",
+            "username": "arefeh",
+            "email": "z.arefeh.za@gmail.com",
+            "role": "user",
+            "createdAt": "2025-11-20T12:44:58.001Z"
+        },
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  },
-  "message": "User registered successfully"
+    "timestamp": "2025-11-20T12:45:00.000Z"
 }</code>
                 </div>
 
@@ -563,7 +654,7 @@ Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 
 {
-  "text": "Complete Phase 3 report",
+    "text": "Complete Phase 2 report",
   "description": "Add screenshots and test results",
   "important": true,
   "priority": "high",
@@ -573,20 +664,56 @@ Content-Type: application/json
 
 // Response:
 {
-  "success": true,
-  "data": {
-    "_id": "...",
-    "text": "Complete Phase 3 report",
-    "done": false,
-    "important": true,
-    "priority": "high",
-    "userId": "...",
-    "createdAt": "2024-01-15T10:30:00.000Z"
-  },
-  "message": "Todo created successfully"
+    "success": true,
+    "data": {
+        "todo": {
+            "_id": "...",
+            "text": "Complete Phase 2 report",
+            "description": "Add screenshots and test results",
+            "done": false,
+            "important": true,
+            "priority": "high",
+            "userId": "...",
+            "createdAt": "2025-11-20T12:46:10.120Z",
+            "updatedAt": "2025-11-20T12:46:10.120Z"
+        }
+    },
+    "timestamp": "2025-11-20T12:46:10.500Z"
 }</code>
                 </div>
             </div>
+
+                        <div class="section">
+                                <h2>📤 قالب استاندارد پاسخ‌ها</h2>
+                                <p>
+                                        میان‌افزار <strong>formatResponse</strong> تمام پاسخ‌های موفق را به فرم یکسان زیر تبدیل می‌کند. علاوه بر
+                                        موفقیت و داده، مهر زمانی و اختیار افزودن <code>meta</code> برای شمارنده‌ها یا اطلاعات تکمیلی نیز در نظر
+                                        گرفته شده است.
+                                </p>
+                                <div class="code-block">
+                                        <code>{
+    "success": true,
+    "data": { "todos": [ ... ] },
+    "meta": { "count": 7 },
+    "timestamp": "2025-11-20T12:50:00.000Z"
+}</code>
+                                </div>
+                                <p>پیغام‌های خطا از قالب زیر پیروی می‌کنند و در صورت اعتبارسنجی ناموفق، جزئیات تمام فیلدها ارسال می‌شود:</p>
+                                <div class="code-block">
+                                        <code>{
+    "success": false,
+    "error": {
+        "message": "Validation failed",
+        "status": 400,
+        "details": [
+            { "field": "text", "msg": "Task text is required" },
+            { "field": "priority", "msg": "Priority must be low, normal, or high" }
+        ]
+    },
+    "timestamp": "2025-11-20T12:51:12.000Z"
+}</code>
+                                </div>
+                        </div>
 
             <!-- Security Features -->
             <div class="section">
@@ -629,6 +756,16 @@ Content-Type: application/json
                             <li>Mongoose Schema Validation</li>
                             <li>Sanitization</li>
                             <li>Error messages واضح</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>API Key Layer</h4>
+                        <ul>
+                            <li>الزام هدر X-API-KEY برای همه مسیرهای /api</li>
+                            <li>خواندن مقدار از .env و قابلیت چند محیط</li>
+                            <li>پاسخ 401 برای کلاینت‌های ناشناس</li>
+                            <li>Skip خودکار در صورت نبود کلید در محیط توسعه</li>
                         </ul>
                     </div>
                     
@@ -744,63 +881,63 @@ docker-compose down</code>
                     <tbody>
                         <tr>
                             <td><span class="badge success">✓ موفق</span></td>
+                            <td>Header فاقد X-API-KEY → پاسخ 401</td>
+                            <td>API Key Enforcement</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge success">✓ موفق</span></td>
+                            <td>origin ناشناخته → Block توسط CORS</td>
+                            <td>CORS Access Control</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge success">✓ موفق</span></td>
+                            <td>Body نامعتبر → پیام «Validation failed» با جزئیات</td>
+                            <td>express-validator</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge success">✓ موفق</span></td>
+                            <td>بیش از 5 تلاش ورود → خطای 429 و retryAfter</td>
+                            <td>Auth Rate Limit</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge success">✓ موفق</span></td>
+                            <td>ایجاد TODO صحیح → پاسخ استاندارد با timestamp</td>
+                            <td>Formatted Success Response</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge success">✓ موفق</span></td>
                             <td>اتصال موفق به localhost:27017</td>
                             <td>MongoDB Connection</td>
                         </tr>
                         <tr>
                             <td><span class="badge success">✓ موفق</span></td>
-                            <td>کاربر با hash شده ایجاد شد</td>
+                            <td>ایجاد کاربر جدید با bcrypt hash</td>
                             <td>User Registration</td>
                         </tr>
                         <tr>
                             <td><span class="badge success">✓ موفق</span></td>
-                            <td>Token معتبر بازگشت داده شد</td>
+                            <td>دریافت token معتبر و بروزرسانی lastLogin</td>
                             <td>User Login</td>
                         </tr>
                         <tr>
                             <td><span class="badge success">✓ موفق</span></td>
-                            <td>TODO با userId ایجاد شد</td>
-                            <td>Create TODO</td>
+                            <td>CRUD کامل با بررسی ownership</td>
+                            <td>Todo Lifecycle</td>
                         </tr>
                         <tr>
                             <td><span class="badge success">✓ موفق</span></td>
-                            <td>فقط TODO های کاربر بازگشت داده شد</td>
-                            <td>Get User TODOs</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge success">✓ موفق</span></td>
-                            <td>به‌روزرسانی با ownership check</td>
-                            <td>Update TODO</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge success">✓ موفق</span></td>
-                            <td>حذف با ownership check</td>
-                            <td>Delete TODO</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge success">✓ موفق</span></td>
-                            <td>429 بعد از 5 تلاش</td>
-                            <td>Auth Rate Limit</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge success">✓ موفق</span></td>
-                            <td>401 برای token نامعتبر</td>
-                            <td>JWT Verification</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge success">✓ موفق</span></td>
-                            <td>آمار صحیح محاسبه شد</td>
+                            <td>آمار TODO ها با Promise.all</td>
                             <td>Get Statistics</td>
                         </tr>
                         <tr>
                             <td><span class="badge success">✓ موفق</span></td>
-                            <td>Server روی هر دو پورت اجرا شد</td>
-                            <td>HTTP + HTTPS</td>
+                            <td>پاسخ 401 برای bearer نامعتبر</td>
+                            <td>JWT Verification</td>
                         </tr>
                         <tr>
                             <td><span class="badge success">✓ موفق</span></td>
-                            <td>MongoDB + App با docker-compose</td>
-                            <td>Docker Deployment</td>
+                            <td>اجرای همزمان HTTP و HTTPS و لاگ متمرکز</td>
+                            <td>Server Startup</td>
                         </tr>
                     </tbody>
                 </table>
@@ -817,9 +954,21 @@ docker-compose down</code>
 🌐 CORS origins: http://localhost:3000, http://localhost:3001
 🔐 JWT Authentication enabled
 ⏱️  Rate limiting active
+🔑 API key enforcement active
+⏳ Request timeout: 10000ms
 ✅ MongoDB Connected: localhost
 📊 Database: todo-app</code>
                 </div>
+
+                <h3>نمونه لاگ‌های Morgan:</h3>
+                <p>لاگ‌های ترکیبی (combined) در فایل <code>access.log</code> ذخیره می‌شوند و رخدادهای 200/201/400 را همراه با User-Agent ثبت می‌کنند.</p>
+                <div class="code-block">
+                    <code>::1 - - [15/Nov/2025:18:54:23 +0000] "GET /api/todos HTTP/1.1" 200 279 "-" "Mozilla/5.0 ..."
+::1 - - [15/Nov/2025:18:56:29 +0000] "POST /api/todos HTTP/1.1" 201 260 "-" "Mozilla/5.0 ..."
+::1 - - [15/Nov/2025:18:57:03 +0000] "POST /api/todos HTTP/1.1" 400 149 "-" "Mozilla/5.0 ..."
+::1 - - [15/Nov/2025:18:57:08 +0000] "GET /api/todos HTTP/1.1" 200 477 "-" "Mozilla/5.0 ..."</code>
+                </div>
+                <p>اولین عدد پس از مسیر وضعیت HTTP را نشان می‌دهد (200 برای موفق، 400 برای خطای اعتبارسنجی) و ستون آخر User-Agent مبدأ را مشخص می‌کند.</p>
             </div>
 
             <!-- Documentation -->
@@ -864,6 +1013,11 @@ docker-compose down</code>
                             <td>250+</td>
                             <td>DOCKER_GUIDE.md</td>
                         </tr>
+                        <tr>
+                            <td>طرح ارائه ۱۰ اسلایدی فاز ۲</td>
+                            <td>2 صفحه</td>
+                            <td>docs/PHASE2_PRESENTATION.md</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -906,6 +1060,8 @@ docker-compose down</code>
                             <li>express-rate-limit 8.2.1</li>
                             <li>compression</li>
                             <li>CORS</li>
+                            <li>Request Timeout Middleware</li>
+                            <li>Morgan Logging</li>
                         </ul>
                     </div>
                     
@@ -933,23 +1089,22 @@ docker-compose down</code>
             <div class="section">
                 <h2>🎯 نتیجه‌گیری</h2>
                 <p>
-                    در فاز ۳، پروژه TODO Dashboard به یک برنامه کاربردی full-stack با استانداردهای حرفه‌ای تبدیل شد.
-                    تمام الزامات پروژه شامل MongoDB، JWT Authentication، Rate Limiting، HTTPS و Docker به طور کامل
-                    پیاده‌سازی شده‌اند. معماری MVC کد را قابل نگهداری و توسعه کرده و امکانات امنیتی مختلف از برنامه
-                    در برابر حملات رایج محافظت می‌کنند.
+                    در فاز ۲، پروژه TODO Dashboard به یک سرویس تولیدی با انبوهی از میان‌افزارهای امنیتی و مدیریتی تبدیل شد.
+                    تمام الزامات شامل Helmet، CORS، Morgan، Compression، Timeout، استانداردسازی پاسخ، اعتبارسنجی
+                    express-validator، Rate Limiting و کنترل API Key به صورت کامل پیاده‌سازی و مستندسازی شده‌اند. نتیجه
+                    یک معماری تمیز، ایمن و آماده‌ی استقرار در محیط Production است.
                 </p>
                 
                 <h3>✨ دستاوردها:</h3>
                 <ul style="margin-right: 40px; margin-top: 15px;">
                     <li>✅ مهاجرت موفق از SQLite به MongoDB</li>
-                    <li>✅ سیستم احراز هویت کامل با JWT و bcrypt</li>
-                    <li>✅ محافظت در برابر حملات با Rate Limiting سه لایه</li>
-                    <li>✅ پشتیبانی از HTTPS برای ارتباطات امن</li>
-                    <li>✅ معماری MVC تمیز و قابل توسعه</li>
-                    <li>✅ جداسازی کامل داده‌های کاربران</li>
-                    <li>✅ Docker support برای استقرار آسان</li>
-                    <li>✅ مستندات جامع به دو زبان فارسی و انگلیسی</li>
-                    <li>✅ تست کامل تمام قابلیت‌ها</li>
+                    <li>✅ سیستم احراز هویت کامل با JWT، bcrypt و API Key Guard</li>
+                    <li>✅ محافظت در برابر حملات با Rate Limiting سه‌لایه و CORS داینامیک</li>
+                    <li>✅ استقرار Helmet، Compression، Timeout و Morgan برای پایداری</li>
+                    <li>✅ معماری MVC تمیز به همراه asyncHandler و formatResponse</li>
+                    <li>✅ Docker + docker-compose برای استقرار سریع</li>
+                    <li>✅ تهیه گزارش فنی، راهنمای تست و اسلاید ۱۰ صفحه‌ای ارائه</li>
+                    <li>✅ تست کامل موفق/ناموفق و ثبت شواهد در access.log</li>
                     <li>✅ آماده برای استقرار در production</li>
                 </ul>
 

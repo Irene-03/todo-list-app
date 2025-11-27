@@ -3,6 +3,7 @@
 // ======================================================================
 
 const API_BASE = "/api/todos";
+const APP_API_KEY = (window.APP_CONFIG && window.APP_CONFIG.apiKey) || "";
 
 // ======================================================================
 // JWT AUTHENTICATION
@@ -40,6 +41,9 @@ async function apiRequest(url, options = {}) {
         'Content-Type': 'application/json',
         ...options.headers
     };
+    if (APP_API_KEY) {
+      headers['X-API-KEY'] = APP_API_KEY;
+    }
     
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -191,6 +195,19 @@ function normalizeApiResponse(payload) {
   return current;
 }
 
+function ensureTodoArray(payload) {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+  if (payload && Array.isArray(payload.todos)) {
+    return payload.todos;
+  }
+  if (payload && Array.isArray(payload.data)) {
+    return payload.data;
+  }
+  return [];
+}
+
 async function fetchJSON(url, options = {}) {
   const token = getToken();
   
@@ -210,6 +227,9 @@ async function fetchJSON(url, options = {}) {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${token}`
   };
+  if (APP_API_KEY) {
+    headers['X-API-KEY'] = APP_API_KEY;
+  }
   
   console.log('Headers:', JSON.stringify(headers));
   
@@ -380,7 +400,8 @@ function makeDirectoryEditable(btn, oldName) {
     }
 
     try {
-      const todos = await fetchJSON(API_BASE);
+      const todosResponse = await fetchJSON(API_BASE);
+      const todos = ensureTodoArray(todosResponse);
       const promises = todos
         .filter(t => t.groups && t.groups.includes(oldName))
         .map(t => {
@@ -595,7 +616,8 @@ function toggleViewMode() {
 
 async function loadTodos() {
   try {
-    let todos = await fetchJSON(API_BASE);
+    let todosResponse = await fetchJSON(API_BASE);
+    let todos = ensureTodoArray(todosResponse);
 
     // Apply directory filter
     if (selectedDirectory) {
@@ -632,8 +654,8 @@ async function loadTodos() {
     }
 
     // Update directories from all todos
-    const allTodos = await fetchJSON(API_BASE);
-    updateDirectoriesFromTodos(allTodos);
+    const allTodosResponse = await fetchJSON(API_BASE);
+    updateDirectoriesFromTodos(ensureTodoArray(allTodosResponse));
 
     // Update title and progress
     updateTitleAndProgress(todos);

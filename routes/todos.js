@@ -96,7 +96,8 @@ function handleValidationErrors(req, res, next) {
           field: err.path,
           msg: err.msg
         }))
-      }
+      },
+      timestamp: new Date().toISOString()
     });
   }
   next();

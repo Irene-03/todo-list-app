@@ -1,4 +1,91 @@
-# Docker ignore patterns
+# Docker ignore patterns - Phase 2 Optimized
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Development
+.git/
+.gitignore
+.env.local
+.env.development
+.env.test
+.env.production.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+access.log*
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+.nyc_output
+
+# Documentation build
+docs/_build/
+
+# Temporary folders
+tmp/
+temp/
+
+# Media files (test screenshots)
+media/
+screenshots/
+
+# Reports (will be mounted as volume)
+reports/*.html
+
+# SSL certificates (will be mounted)
+cert/
+
+# Database files (for local development)
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker compose files (not needed in image)
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# README and documentation
+README*.md
+CHANGELOG.md
+LICENSE
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Build artifacts
+build/
+dist/
 # Similar to .gitignore but for Docker builds
 
 # Dependencies

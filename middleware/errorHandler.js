@@ -32,6 +32,10 @@ function errorHandler(err, req, res, next) {
     },
     timestamp: new Date().toISOString()
   };
+
+  if (err.details) {
+    errorResponse.error.details = err.details;
+  }
   
   // Add stack trace in development
   if (process.env.NODE_ENV !== 'production') {
