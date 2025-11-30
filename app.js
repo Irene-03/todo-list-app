@@ -19,6 +19,7 @@ const formatResponse = require("./middleware/formatResponse");
 const apiKeyAuth = require("./middleware/apiKeyAuth");
 const requestTimeout = require("./middleware/requestTimeout");
 const { apiLimiter } = require("./middleware/rateLimiter");
+const { createLearningRouter, LEARNING_MODES } = require("./routes/learning");
 
 const authRouter = require("./routes/auth");
 const todosRouter = require("./routes/todos");
@@ -26,6 +27,8 @@ const todosRouter = require("./routes/todos");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HTTPS_PORT = process.env.HTTPS_PORT || 3443;
+const LEARNING_MODE = process.env.LEARNING_MODE || LEARNING_MODES.ADVANCED;
+const isLearningModeEnabled = LEARNING_MODE !== LEARNING_MODES.ADVANCED;
 
 // ======================================================================
 // DATABASE CONNECTION
@@ -81,6 +84,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // 7. Format Response - Standardize all responses
 app.use(formatResponse);
+
+// Optional learning mode routes (bypass authentication and advanced middleware)
+if (isLearningModeEnabled) {
+  const learningRouter = createLearningRouter(LEARNING_MODE);
+  app.use('/todos', learningRouter);
+  console.log(`🎓 Learning mode enabled: ${LEARNING_MODE}`);
+}
 
 // 8. Rate Limiting + API Key - Apply to all API routes
 app.use('/api', apiKeyAuth, apiLimiter);

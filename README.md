@@ -51,8 +51,62 @@
 
 ---
 
-## 🚀 نصب سریع
+## 🎓 حالت‌های یادگیری و اهداف آموزشی
 
+### Learning Outcomes
+- اتصال Node.js به **MongoDB Atlas** و مدیریت Collectionها
+- ساخت و تست CRUD مینیمال با Mongo و Redis
+- درک عبور JSON روی HTTP و تست با `curl` در ویندوز
+- اتصال Node.js به **Redis** و مدل‌سازی داده ساده با key/list
+- مقایسه عملکرد Redis و MongoDB Atlas و تحلیل تفاوت سرعت
+
+### سوئیچ بین حالت‌ها با متغیر محیطی
+متغیر `LEARNING_MODE` تعیین می‌کند کدام پیاده‌سازی فعال باشد:
+
+| مقدار `LEARNING_MODE` | توضیح | مسیرهای فعال |
+|-----------------------|-------|--------------|
+| `advanced` (پیش‌فرض)  | سیستم کامل با JWT و میان‌افزارهای حرفه‌ای | `/api/...` |
+| `mongo-basic`         | API ساده بدون احراز هویت با MongoDB Atlas | `/todos` |
+| `redis-basic`         | API ساده مبتنی بر Redis | `/todos` |
+
+نمونه تنظیم در `.env`:
+
+```env
+# حالت Mongo ساده
+LEARNING_MODE=mongo-basic
+LEARNING_DB_NAME=todo_db
+LEARNING_MONGODB_URI="your-atlas-connection-string"
+
+# حالت Redis ساده
+# LEARNING_MODE=redis-basic
+# REDIS_URL=redis://default:password@host:6379
+```
+
+> ⚠️ در حالت‌های یادگیری، مسیر `/todos` بدون احراز هویت، rate limit و قالب‌بندی پاسخ در دسترس است تا تمرین دقیقاً مشابه سناریوی دانشگاه باشد. API پیشرفته (`/api/todos`) همچنان فعال است.
+
+### نمونه‌های curl (Windows CMD)
+
+```cmd
+:: ایجاد TODO
+curl -X POST http://localhost:3000/todos ^
+ -H "Content-Type: application/json" ^
+ -d "{\"title\":\"Buy milk\"}"
+
+:: دریافت همه TODO ها
+curl http://localhost:3000/todos
+
+:: بروزرسانی
+curl -X PUT http://localhost:3000/todos/ID_HERE ^
+ -H "Content-Type: application/json" ^
+ -d "{\"title\":\"Buy eggs\",\"completed\":true}"
+
+:: حذف
+curl -X DELETE http://localhost:3000/todos/ID_HERE
+```
+
+---
+
+## 🚀 نصب سریع
 ### پیش‌نیازها
 - Node.js 18+
 - MongoDB (محلی یا Atlas)
@@ -799,6 +853,29 @@ Response (Formatted JSON)
 ### 📸 Screenshots
 - Available in `screenshots/` folder
 - Guide: `http://localhost:3000/screenshots-guide.html`
+
+---
+
+## ⚖️ مقایسه عملکرد Redis و MongoDB
+
+برای سنجش عملی سرعت، پوشه `compare-performance/` دو اسکریپت دارد:
+
+```bash
+# تست Redis (نیازمند REDIS_URL)
+node compare-performance/redis_test.js
+
+# تست MongoDB Atlas (نیازمند MONGO_URL یا MONGODB_URI)
+node compare-performance/mongo_test.js
+```
+
+خروجی نمونه:
+
+| Operation          | Redis (ms) | MongoDB Atlas (ms) |
+|--------------------|------------|--------------------|
+| Insert 1000 items  |     35     |        480         |
+| Read 1000 items    |      8     |        220         |
+
+> Redis سریع‌تر است زیرا داده را در حافظه نگه می‌دارد؛ MongoDB برای ذخیره‌سازی دائمی و Query های پیچیده مناسب‌تر است.
 
 ---
 

@@ -196,16 +196,24 @@ function normalizeApiResponse(payload) {
 }
 
 function ensureTodoArray(payload) {
+  let list = [];
+
   if (Array.isArray(payload)) {
-    return payload;
+    list = payload;
+  } else if (payload && Array.isArray(payload.todos)) {
+    list = payload.todos;
+  } else if (payload && Array.isArray(payload.data)) {
+    list = payload.data;
   }
-  if (payload && Array.isArray(payload.todos)) {
-    return payload.todos;
-  }
-  if (payload && Array.isArray(payload.data)) {
-    return payload.data;
-  }
-  return [];
+
+  return list.map(todo => {
+    if (todo && !todo.id) {
+      // Mongo returns _id objects; normalize so UI logic consistently uses id.
+      const normalizedId = todo._id ? String(todo._id) : (todo.todoId ?? todo.id);
+      return { ...todo, id: normalizedId };
+    }
+    return todo;
+  });
 }
 
 async function fetchJSON(url, options = {}) {
